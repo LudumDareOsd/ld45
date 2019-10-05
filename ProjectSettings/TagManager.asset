@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - Enemies
+  - PowerUp
   layers:
   - Default
   - TransparentFX
@@ -42,4 +43,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 1425526659
+    locked: 0
+  - name: Main
+    uniqueID: 2743753799
+    locked: 0
+  - name: Top
+    uniqueID: 3286898015
     locked: 0
