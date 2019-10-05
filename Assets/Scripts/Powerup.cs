@@ -11,12 +11,11 @@ public class Powerup : MonoBehaviour
     {
 		gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
 		var rb = GetComponent<Rigidbody2D>();
-		rb.velocity.Set(0.0f, 0.3f);
+		rb.velocity.Set(0.0f, 0.25f);
 	}
 
 	public void OnTriggerEnter2D(Collider2D collision)
 	{
-		Debug.Log("PICKUP POWERUP");
 		gameController.PickupPowerup();
 		Destroy(gameObject);
 	}

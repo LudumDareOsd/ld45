@@ -60,11 +60,9 @@ public class GameController : MonoBehaviour
 	{
 		if (enemies.Count < 2)
 		{
-			Debug.Log("SPAWN POWERUP");
-			var powerup = Instantiate(powerupPrefab, enemy.transform.position, enemy.transform.rotation);
+			Instantiate(powerupPrefab, enemy.transform.position, enemy.transform.rotation);
 		}
 		enemies.Remove(enemy);
-		Debug.Log(enemies.Count);
 	}
 
 	public void PickupPowerup()
