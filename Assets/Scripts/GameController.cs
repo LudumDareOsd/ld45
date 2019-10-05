@@ -57,7 +57,7 @@ public class GameController : MonoBehaviour
 			}
 			yield return new WaitForSeconds(13);
 			enemies.Clear();
-			wave += wave >= bosswave ? 1 : 0;
+			wave += (wave > bosswave) ? 0 : 1;
 		}
 	}
 
