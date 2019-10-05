@@ -1,18 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ScrollingBackground : MonoBehaviour
 {
-    // Start is called before the first frame update
+	private Material material;
+
     void Start()
     {
-        
+		material = GetComponent<MeshRenderer>().material;    
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+		material.mainTextureOffset = new Vector2(0, (Time.deltaTime * 0.3f) + material.mainTextureOffset.y);
     }
 }
