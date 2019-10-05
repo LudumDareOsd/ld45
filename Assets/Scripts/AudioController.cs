@@ -1,10 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class AudioController : MonoBehaviour
 {
 	private AudioSource source;
+	private List<GameObject> sources = new List<GameObject>();
 
 	public void Start()
 	{
@@ -13,7 +13,8 @@ public class AudioController : MonoBehaviour
 
 	public AudioSource PlaySingle(AudioClip clip, float volume)
 	{
-		var audioSrc = source.GetComponent<AudioSource>();
+		
+		var audioSrc = GetSource().GetComponent<AudioSource>();
 		audioSrc.clip = clip;
 		audioSrc.volume = volume;
 		audioSrc.spatialBlend = 0;
@@ -24,4 +25,21 @@ public class AudioController : MonoBehaviour
 
 		return audioSrc;
 	}
+
+	private GameObject GetSource()
+	{
+		var source = sources.Find(it => !it.GetComponent<AudioSource>().isPlaying);
+
+		if (source == null)
+		{
+			var newSource = new GameObject("AudioSource");
+			newSource.AddComponent<AudioSource>();
+			source = newSource;
+			sources.Add(source);
+		}
+
+		return source;
+	}
+
+
 }

@@ -3,10 +3,18 @@
 public class HardPoint : MonoBehaviour
 {
 	public GameObject bullet;
+	public AudioClip audioClip;
 	public float rateOfFire;
+	public float volume = 1f;
 	private float cd = 0f;
+	private AudioController audioController;
 
-    void Update()
+	private void Start()
+	{
+		audioController = GameObject.Find("AudioController").GetComponent<AudioController>();
+	}
+
+	void Update()
     {
 		if (cd > 0)
 		{
@@ -18,6 +26,7 @@ public class HardPoint : MonoBehaviour
 	{
 		if (cd <= 0) {
 			CreateBullet();
+			audioController.PlaySingle(audioClip, volume);
 			cd = rateOfFire;
 		}
 	}
