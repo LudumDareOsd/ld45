@@ -95,7 +95,6 @@ public class Player : MonoBehaviour
 				CreateHardPoint(transform.position + new Vector3(-0.3f, -0.15f, 0), transform.rotation);
 				CreateHardPoint(transform.position + new Vector3(0, 0.15f, 0), transform.rotation);
 				break;
-			
 		}
 	}
 
