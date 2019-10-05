@@ -1,40 +1,82 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-	private PlayerRenderer renderer;
+	private PlayerRenderer playerRenderer;
 	private float moveSpeed = 400f;
 	private float maxMovespeed = 5f;
 	private Rigidbody2D body;
 	private HardPoint[] hardPoints;
+	private int powerLevel = 1;
 
-	void Start()
-    {
-		renderer = GetComponentInChildren<PlayerRenderer>();
+	private void Start()
+	{
+		playerRenderer = GetComponentInChildren<PlayerRenderer>();
 		body = GetComponent<Rigidbody2D>();
 		hardPoints = GetComponentsInChildren<HardPoint>();
-
+		PowerLevel(powerLevel);
 	}
 
-    void Update()
-    {
+	private void Update()
+	{
 		Turn(Input.GetAxis("Horizontal"));
 		Accelerate(Input.GetAxis("Vertical"));
 
-		if (Input.GetButton("Fire1")) {
-			foreach (var hardPoint in hardPoints) {
+		if (Input.GetButton("Fire1"))
+		{
+			foreach (var hardPoint in hardPoints)
+			{
 				hardPoint.Fire();
 			}
 		}
-    }
+	}
 
 	public void OnTriggerEnter2D(Collider2D collision)
 	{
-		Debug.Log("hit");
+		if (collision.CompareTag("powerup"))
+		{
+			powerLevel++;
+			PowerLevel(powerLevel);
+		}
+		else
+		{
+			Destroy(gameObject);
+		}
 	}
 
-	private void Turn(float turn) {
+	private void PowerLevel(int level) {
+		playerRenderer.PowerLevel(powerLevel);
+
+		switch (level) {
+			case 1:
+
+				break;
+
+			case 2:
+				break;
+
+			case 3:
+				break;
+
+			case 4:
+				break;
+
+			case 5:
+				break;
+			
+		}
+
+		hardPoints = GetComponentsInChildren<HardPoint>();
+	}
+
+	private void CleanHardpoints() {
+		foreach (var hardPoint in hardPoints) {
+			Destroy(hardPoint.gameObject);
+		}
+	}
+
+	private void Turn(float turn)
+	{
 		var velocity = body.velocity;
 		var turnForce = (moveSpeed * turn);
 
@@ -44,18 +86,20 @@ public class Player : MonoBehaviour
 
 		if (turn > 0)
 		{
-			renderer.TurnRight();
+			playerRenderer.TurnRight();
 		}
 		else if (turn < 0)
 		{
-			renderer.TurnLeft();
+			playerRenderer.TurnLeft();
 		}
-		else {
-			renderer.Straight();
+		else
+		{
+			playerRenderer.Straight();
 		}
 	}
 
-	private void Accelerate(float acceleration) {
+	private void Accelerate(float acceleration)
+	{
 		var velocity = body.velocity;
 		var accelerationForce = (moveSpeed * acceleration);
 
@@ -64,7 +108,8 @@ public class Player : MonoBehaviour
 		body.velocity = new Vector2(velocity.x, normalize(velocity.y, maxMovespeed));
 	}
 
-	private float normalize(float value, float maxValue) {
+	private float normalize(float value, float maxValue)
+	{
 		var result = value;
 
 		if (value > maxValue)
