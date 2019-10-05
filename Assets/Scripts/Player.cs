@@ -5,6 +5,7 @@ public class Player : MonoBehaviour
 {
 	public GameObject hardPoint;
 	public GameObject bullet;
+	public AudioClip fireSound;
 
 	private PlayerRenderer playerRenderer;
 	private float moveSpeed = 600f;
@@ -102,7 +103,8 @@ public class Player : MonoBehaviour
 		var hp = Instantiate(hardPoint, position, rotation, transform);
 		var hpScript = hp.GetComponent<HardPoint>();
 		hpScript.bullet = bullet;
-		hpScript.rateOfFire = 0.4f;
+		hpScript.rateOfFire = 0.3f;
+		hpScript.audioClip = fireSound;
 
 		hardPoints.Add(hpScript);
 	}
