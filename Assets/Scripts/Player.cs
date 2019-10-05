@@ -1,19 +1,22 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+	public GameObject hardPoint;
+	public GameObject bullet;
+
 	private PlayerRenderer playerRenderer;
-	private float moveSpeed = 400f;
-	private float maxMovespeed = 5f;
+	private float moveSpeed = 600f;
+	private float maxMovespeed = 4f;
 	private Rigidbody2D body;
-	private HardPoint[] hardPoints;
+	private List<HardPoint> hardPoints = new List<HardPoint>();
 	private int powerLevel = 1;
 
 	private void Start()
 	{
 		playerRenderer = GetComponentInChildren<PlayerRenderer>();
 		body = GetComponent<Rigidbody2D>();
-		hardPoints = GetComponentsInChildren<HardPoint>();
 		PowerLevel(powerLevel);
 	}
 
@@ -33,7 +36,7 @@ public class Player : MonoBehaviour
 
 	public void OnTriggerEnter2D(Collider2D collision)
 	{
-		if (collision.CompareTag("powerup"))
+		if (collision.CompareTag("PowerUp"))
 		{
 			powerLevel++;
 			PowerLevel(powerLevel);
@@ -45,28 +48,64 @@ public class Player : MonoBehaviour
 	}
 
 	private void PowerLevel(int level) {
+		CleanHardpoints();
 		playerRenderer.PowerLevel(powerLevel);
+
+		hardPoints = new List<HardPoint>();
 
 		switch (level) {
 			case 1:
-
+				CreateHardPoint(transform.position + new Vector3(0, 0.15f, 0), transform.rotation);
 				break;
 
 			case 2:
+				CreateHardPoint(transform.position + new Vector3(0.09f, 0.15f, 0), transform.rotation);
+				CreateHardPoint(transform.position + new Vector3(-0.09f, 0.15f, 0), transform.rotation);
 				break;
 
 			case 3:
+				CreateHardPoint(transform.position + new Vector3(0.3f, -0.15f, 0), transform.rotation);
+				CreateHardPoint(transform.position + new Vector3(-0.3f, -0.15f, 0), transform.rotation);
+				CreateHardPoint(transform.position + new Vector3(0, 0.15f, 0), transform.rotation);
 				break;
 
 			case 4:
+				var rightRotation = new Quaternion();
+				var leftRotation = new Quaternion();
+
+				rightRotation.eulerAngles = new Vector3(0, 0, 25);
+				leftRotation.eulerAngles = new Vector3(0, 0, -25);
+
+				CreateHardPoint(transform.position + new Vector3(0.3f, -0.15f, 0), leftRotation);
+				CreateHardPoint(transform.position + new Vector3(-0.3f, -0.15f, 0), rightRotation);
+				CreateHardPoint(transform.position + new Vector3(0.09f,  0.15f, 0), transform.rotation);
+				CreateHardPoint(transform.position + new Vector3(-0.09f,  0.15f, 0), transform.rotation);
 				break;
 
-			case 5:
+			default:
+				var rightRotation2 = new Quaternion();
+				var leftRotation2 = new Quaternion();
+
+				rightRotation2.eulerAngles = new Vector3(0, 0, 25);
+				leftRotation2.eulerAngles = new Vector3(0, 0, -25);
+
+				CreateHardPoint(transform.position + new Vector3(0.3f, -0.15f, 0), leftRotation2);
+				CreateHardPoint(transform.position + new Vector3(-0.3f, -0.15f, 0), rightRotation2);
+				CreateHardPoint(transform.position + new Vector3(0.3f, -0.15f, 0), transform.rotation);
+				CreateHardPoint(transform.position + new Vector3(-0.3f, -0.15f, 0), transform.rotation);
+				CreateHardPoint(transform.position + new Vector3(0, 0.15f, 0), transform.rotation);
 				break;
 			
 		}
+	}
 
-		hardPoints = GetComponentsInChildren<HardPoint>();
+	private void CreateHardPoint(Vector3 position, Quaternion rotation) {
+		var hp = Instantiate(hardPoint, position, rotation, transform);
+		var hpScript = hp.GetComponent<HardPoint>();
+		hpScript.bullet = bullet;
+		hpScript.rateOfFire = 0.4f;
+
+		hardPoints.Add(hpScript);
 	}
 
 	private void CleanHardpoints() {

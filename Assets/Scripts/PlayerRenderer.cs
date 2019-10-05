@@ -12,14 +12,16 @@ public class PlayerRenderer : MonoBehaviour
 	public Sprite pLevel4;
 	public Sprite pLevel5;
 
+	public GameObject powerlevel;
+
 	private PlayerState state = PlayerState.Straight;
 	private SpriteRenderer shipRenderer;
 	private SpriteRenderer powerRenderer;
 
-	public void Start()
+	public void Awake()
 	{
 		shipRenderer = GetComponent<SpriteRenderer>();
-		powerRenderer = GetComponentInChildren<SpriteRenderer>();
+		powerRenderer = powerlevel.GetComponent<SpriteRenderer>();
 	}
 
 	public void TurnLeft()
@@ -58,19 +60,19 @@ public class PlayerRenderer : MonoBehaviour
 	{
 		switch (level)
 		{
-			case 0:
+			case 1:
 				powerRenderer.sprite = pLevel1;
 				break;
-			case 1:
+			case 2:
 				powerRenderer.sprite = pLevel2;
 				break;
-			case 2:
+			case 3:
 				powerRenderer.sprite = pLevel3;
 				break;
-			case 3:
+			case 4:
 				powerRenderer.sprite = pLevel4;
 				break;
-			case 4:
+			case 5:
 				powerRenderer.sprite = pLevel5;
 				break;
 		}
