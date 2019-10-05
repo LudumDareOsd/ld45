@@ -12,6 +12,8 @@ public class EnemyBehavior : MonoBehaviour
 	private GameController gameController;
 	private int wave;
 
+	private HardPoint hardpoint;
+
 	void Start()
 	{
 		var gameControllerObject = GameObject.FindWithTag("GameController");
@@ -20,6 +22,7 @@ public class EnemyBehavior : MonoBehaviour
 			gameController = gameControllerObject.GetComponent<GameController>();
 		}
 
+		hardpoint = GetComponentInChildren<HardPoint>();
 		wave = gameController.GetWave();
 
 		lifetime = 0;
@@ -54,8 +57,14 @@ public class EnemyBehavior : MonoBehaviour
 
 	}
 
+	public void OnTriggerEnter2D(Collider2D collision)
+	{
+		Debug.Log("hit");
+	}
+
 	void FixedUpdate()
 	{
+		hardpoint.Fire();
 		//targetManeuver = Random.Range(1, 2) * -Mathf.Sign(transform.position.x);
 		//var newManeuver = Mathf.MoveTowards(rb.velocity.x, targetManeuver, Time.deltaTime * 0.1f);
 		//rb.velocity = new Vector3(newManeuver, -0.1f, currentSpeed);
@@ -71,12 +80,11 @@ public class EnemyBehavior : MonoBehaviour
 		//rb.rotation = Quaternion.Euler(0.0f, 0.0f, rb.velocity.x * -tilt);
 
 
-
+		// TODO: Change to DT
 		var p = (lifetime / 400.0f);
-		Vector3 pt = enemyPaths[wave % enemyPaths.Length].point(p); // retrieve a point along the path
+		Vector3 pt = enemyPaths[wave % enemyPaths.Length].point(p);
 
 		rb.position = pt;
-
 
 		if (p > 1.0f)
 		{

@@ -13,7 +13,6 @@ public class GameController : MonoBehaviour
 	{
 
 		enemyPrefab = (GameObject)Resources.Load("Prefabs/Enemy", typeof(GameObject));
-			//GameObject.FindWithTag("Enemy");
 		enemies = GameObject.FindWithTag("Enemies");
 		spawnPos = Camera.main.ViewportToWorldPoint(new Vector3(0.0f, 1.1f, 0.0f));
 		StartCoroutine(SpawnWaves());
