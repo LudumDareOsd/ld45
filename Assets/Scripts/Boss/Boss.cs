@@ -89,6 +89,7 @@ public class Boss : MonoBehaviour
 			StartCoroutine(Evade());
 			//leftEye.Kill();
 			//rightEye.Kill();
+			bigEyeToggle = 2.5f;
 		}
 
 		if (state == BossState.PHASE2)
