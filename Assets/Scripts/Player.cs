@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
 	public GameObject hardPoint;
 	public GameObject bullet;
 	public AudioClip fireSound;
+	public AudioClip powerUpSound;
 
 	private PlayerRenderer playerRenderer;
 	private float moveSpeed = 600f;
@@ -13,11 +14,13 @@ public class Player : MonoBehaviour
 	private Rigidbody2D body;
 	private List<HardPoint> hardPoints = new List<HardPoint>();
 	private int powerLevel = 1;
+	private AudioController audioController;
 
 	private void Start()
 	{
 		playerRenderer = GetComponentInChildren<PlayerRenderer>();
 		body = GetComponent<Rigidbody2D>();
+		audioController = GameObject.Find("AudioController").GetComponent<AudioController>();
 		PowerLevel(powerLevel);
 	}
 
@@ -41,6 +44,7 @@ public class Player : MonoBehaviour
 		{
 			powerLevel++;
 			PowerLevel(powerLevel);
+			audioController.PlaySingle(powerUpSound, 0.7f);
 		}
 		else
 		{
@@ -105,6 +109,7 @@ public class Player : MonoBehaviour
 		hpScript.bullet = bullet;
 		hpScript.rateOfFire = 0.3f;
 		hpScript.audioClip = fireSound;
+		hpScript.volume = 0.7f;
 
 		hardPoints.Add(hpScript);
 	}
