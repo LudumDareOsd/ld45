@@ -15,10 +15,10 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
-  - 
+  - PlayerObject
+  - EnemyObject
+  - PlayerBullet
+  - EnemyBullet
   - 
   - 
   - 
