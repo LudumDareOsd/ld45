@@ -14,7 +14,7 @@ public class Eye : MonoBehaviour
 	void Start()
     {
 		sprite = GetComponent<SpriteRenderer>();
-		coll = GetComponent<CircleCollider2D>();
+		coll = GetComponent<Collider2D>();
 		hp = GetComponentInChildren<HardPoint>();
 	}
 
@@ -43,6 +43,14 @@ public class Eye : MonoBehaviour
 		if (dead) return;
 		sprite.enabled = !sprite.enabled;
 		coll.enabled = !coll.enabled;
+		spreadtime = 0.0f;
+	}
+
+	public void ToggleTo(bool to)
+	{
+		if (dead) return;
+		sprite.enabled = !to;
+		coll.enabled = to;
 		spreadtime = 0.0f;
 	}
 

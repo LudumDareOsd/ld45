@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class EnemyBehavior : MonoBehaviour
 {
-	private float currentSpeed;
-	private float targetManeuver;
 	private LTBezierPath[] enemyPaths;
 	private Rigidbody2D rb;
 	private int life = 3;
@@ -50,7 +48,6 @@ public class EnemyBehavior : MonoBehaviour
 
 	public void OnTriggerEnter2D(Collider2D collision)
 	{
-		Debug.Log("hit enemy");
 		life--;
 		if (life < 1)
 		{

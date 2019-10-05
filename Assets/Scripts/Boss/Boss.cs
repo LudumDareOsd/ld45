@@ -79,7 +79,6 @@ public class Boss : MonoBehaviour
 		if (state == BossState.PHASE1)
 		{
 			StopCoroutine(Appear());
-			//StartCoroutine(SpreadShot());
 			leftEye.ToggleEye();
 			eyeToggle = 0.0f;
 		}
@@ -87,13 +86,15 @@ public class Boss : MonoBehaviour
 		if (state == BossState.PHASE2)
 		{
 			StartCoroutine(Evade());
-			//leftEye.Kill();
-			//rightEye.Kill();
+			leftEye.ToggleTo(false);
+			rightEye.ToggleTo(false);
 			bigEyeToggle = 2.5f;
 		}
 
-		if (state == BossState.PHASE2)
+		if (state == BossState.PHASE3)
 		{
+			leftEye.ToggleTo(true);
+			rightEye.ToggleTo(false);
 			eyeToggle = 0.0f;
 			bigEyeToggle = 2.5f;
 		}
