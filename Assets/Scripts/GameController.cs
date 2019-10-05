@@ -6,15 +6,17 @@ public class GameController : MonoBehaviour
 {
 	private int wave;
 	private Vector3 spawnPos;
-	private GameObject enemyPrefab;
-	private GameObject enemies;
-
+	private Player player;
+	private GameObject enemyPrefab, powerupPrefab, enemiesContainer;
+	private List<GameObject> enemies = new List<GameObject>();
+	
 	void Start()
 	{
-
+		powerupPrefab = (GameObject)Resources.Load("Prefabs/Powerup", typeof(GameObject));
 		enemyPrefab = (GameObject)Resources.Load("Prefabs/Enemy", typeof(GameObject));
-		enemies = GameObject.FindWithTag("Enemies");
-		spawnPos = Camera.main.ViewportToWorldPoint(new Vector3(0.0f, 1.1f, 0.0f));
+		enemiesContainer = GameObject.FindWithTag("Enemies");
+		player = GameObject.FindWithTag("Player").GetComponent<Player>();
+		spawnPos = Camera.main.ViewportToWorldPoint(new Vector3(-1.0f, 1.1f, 0.0f));
 		StartCoroutine(SpawnWaves());
 		Restart();
 	}
@@ -24,7 +26,7 @@ public class GameController : MonoBehaviour
 		//Debug.Log("restart");
 
 		// TODO: Code to reset player restart map etc
-		wave = 8;
+		wave = 1;
 	}
 
 	public void GameOver()
@@ -32,27 +34,43 @@ public class GameController : MonoBehaviour
 		Restart();
 	}
 
-	public int GetWave() { return wave; }
-
 	IEnumerator SpawnWaves()
 	{
-		yield return new WaitForSeconds(2);
+		yield return new WaitForSeconds(4);
 		while (true)
 		{
 			Debug.Log("Spawning wave " + wave.ToString());
 
 			for (var i = 0; i < wave; i++)
 			{
-				//var spawnPosition = new Vector3(Random.Range(-spawnPos.x, spawnPos.x), spawnPos.y, 0.0f);
 				var spawnPosition = new Vector3(spawnPos.x, spawnPos.y, 0.0f);
 				Quaternion spawnRotation = Quaternion.identity;
 				var enemy = Instantiate(enemyPrefab, spawnPosition, spawnRotation);
-				enemy.transform.SetParent(enemies.transform);
+				enemy.transform.SetParent(enemiesContainer.transform);
+				enemies.Add(enemy);
 				yield return new WaitForSeconds(1);
 			}
 			yield return new WaitForSeconds(10);
+			enemies.Clear();
 			wave++;
 		}
 	}
 
+	public void SpawnPowerup(GameObject enemy)
+	{
+		if (enemies.Count < 2)
+		{
+			Debug.Log("SPAWN POWERUP");
+			var powerup = Instantiate(powerupPrefab, enemy.transform.position, enemy.transform.rotation);
+		}
+		enemies.Remove(enemy);
+		Debug.Log(enemies.Count);
+	}
+
+	public void PickupPowerup()
+	{
+		//player.GimmiePowah();
+	}
+
+	public int GetWave() { return wave; }
 }
