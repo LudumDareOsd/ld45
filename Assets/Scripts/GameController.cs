@@ -13,6 +13,7 @@ public class GameController : MonoBehaviour
 	private GameObject lifeParent;
 	private bool intro = true;
 	private bool isDead = false;
+	private bool isWin = false;
 	private GameObject title;
 	private GameObject gameOver;
 	private GameObject pressStart;
@@ -46,7 +47,7 @@ public class GameController : MonoBehaviour
 
 	public void FixedUpdate()
 	{
-		if (isDead) {
+		if (isDead || isWin) {
 			if(Input.GetButton("Fire3")) {
 				SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 			}
@@ -59,12 +60,6 @@ public class GameController : MonoBehaviour
 		wave = 1;
 	}
 
-	public void GameOver()
-	{
-		// Show some gameover screen???
-		Restart();
-	}
-
 	public bool IsIntro()
 	{
 		return intro;
@@ -72,10 +67,21 @@ public class GameController : MonoBehaviour
 
 	public void Dead()
 	{
-		isDead = true;
+		if (!isWin) {
+			isDead = true;
 
-		gameOver.SetActive(true);
-		pressStart.SetActive(true);
+			gameOver.SetActive(true);
+			pressStart.SetActive(true);
+		}
+	}
+
+	public void Win() {
+		if (!isDead) {
+			isWin = true;
+
+			congrats.SetActive(true);
+			pressStart.SetActive(true);
+		}
 	}
 
 	private IEnumerator IntroSequence()

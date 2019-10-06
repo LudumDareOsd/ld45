@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Powerup : MonoBehaviour
 {
+	public WeaponType weaponType = WeaponType.Plasma;
 	private GameController gameController;
 
 	// Start is called before the first frame update

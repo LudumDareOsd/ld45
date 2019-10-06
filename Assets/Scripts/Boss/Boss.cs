@@ -119,6 +119,7 @@ public class Boss : MonoBehaviour
 
 		else if (state == BossState.DEAD)
 		{
+			gameController.Win();
 			audioController.PlaySingle(deathSound, 0.7f);
 			Destroy(gameObject);
 		}

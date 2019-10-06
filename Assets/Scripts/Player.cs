@@ -6,6 +6,10 @@ public class Player : MonoBehaviour
 {
 	public GameObject hardPoint;
 	public GameObject bullet;
+	public GameObject laserBullet;
+	public GameObject laserScytheSmall;
+	public GameObject laserScytheLarge;
+
 	public GameObject explosion;
 	public AudioClip fireSound;
 	public AudioClip powerUpSound;
@@ -22,6 +26,7 @@ public class Player : MonoBehaviour
 	private GameController gameController;
 	private int lifes = 3;
 	private bool immortal = false;
+	private WeaponType currentWeaponType;
 
 	private void Start()
 	{
@@ -30,7 +35,7 @@ public class Player : MonoBehaviour
 		audioController = GameObject.Find("AudioController").GetComponent<AudioController>();
 		gameController = GameObject.Find("GameController").GetComponent<GameController>();
 
-		PowerLevel(powerLevel);
+		PowerLevel(powerLevel, WeaponType.Plasma);
 	}
 
 	private void FixedUpdate()
@@ -48,23 +53,31 @@ public class Player : MonoBehaviour
 				}
 			}
 		}
-		else {
+		else
+		{
 			body.velocity = new Vector3(0, 1f, 0);
 		}
-		
 	}
 
 	public void OnTriggerEnter2D(Collider2D collision)
 	{
 		if (collision.CompareTag("PowerUp"))
 		{
-			powerLevel++;
-			PowerLevel(powerLevel);
+			var pu = collision.gameObject.GetComponent<Powerup>();
+
+			if (pu.weaponType.Equals(currentWeaponType))
+			{
+				powerLevel++;
+			}
+
+			PowerLevel(powerLevel, pu.weaponType);
+
+			PowerLevel(4, WeaponType.Beam);
+
 			audioController.PlaySingle(powerUpSound, 0.7f);
 		}
 		else
 		{
-
 			if (!immortal)
 			{
 				if (lifes <= 1)
@@ -88,10 +101,11 @@ public class Player : MonoBehaviour
 		}
 	}
 
-	private void PowerLevel(int level)
+	private void PowerLevel(int level, WeaponType type)
 	{
+		currentWeaponType = type;
 		CleanHardpoints();
-		playerRenderer.PowerLevel(powerLevel);
+		playerRenderer.PowerLevel(level, type);
 
 		hardPoints = new List<HardPoint>();
 
@@ -101,31 +115,61 @@ public class Player : MonoBehaviour
 				break;
 
 			case 1:
-				CreateHardPoint(transform.position + new Vector3(0, 0.15f, 0), transform.rotation);
+				if (type.Equals(WeaponType.Plasma))
+				{
+					CreateHardPoint(transform.position + new Vector3(0, 0.15f, 0), transform.rotation, bullet);
+				}
+				else
+				{
+					CreateHardPoint(transform.position + new Vector3(0, 0.15f, 0), transform.rotation, laserBullet);
+				}
 				break;
 
 			case 2:
-				CreateHardPoint(transform.position + new Vector3(0.09f, 0.15f, 0), transform.rotation);
-				CreateHardPoint(transform.position + new Vector3(-0.09f, 0.15f, 0), transform.rotation);
+				if (type.Equals(WeaponType.Plasma))
+				{
+					CreateHardPoint(transform.position + new Vector3(0.09f, 0.15f, 0), transform.rotation, bullet);
+					CreateHardPoint(transform.position + new Vector3(-0.09f, 0.15f, 0), transform.rotation, bullet);
+				}
+				else
+				{
+					CreateHardPoint(transform.position + new Vector3(0.09f, 0.15f, 0), transform.rotation, laserBullet);
+					CreateHardPoint(transform.position + new Vector3(-0.09f, 0.15f, 0), transform.rotation, laserBullet);
+				}
 				break;
 
 			case 3:
-				CreateHardPoint(transform.position + new Vector3(0.3f, -0.15f, 0), transform.rotation);
-				CreateHardPoint(transform.position + new Vector3(-0.3f, -0.15f, 0), transform.rotation);
-				CreateHardPoint(transform.position + new Vector3(0, 0.15f, 0), transform.rotation);
+				if (type.Equals(WeaponType.Plasma))
+				{
+					CreateHardPoint(transform.position + new Vector3(0.3f, -0.15f, 0), transform.rotation, bullet);
+					CreateHardPoint(transform.position + new Vector3(-0.3f, -0.15f, 0), transform.rotation, bullet);
+					CreateHardPoint(transform.position + new Vector3(0, 0.15f, 0), transform.rotation, bullet);
+				}
+				else
+				{
+					CreateHardPoint(transform.position + new Vector3(0, 0.7f, 0), transform.rotation, laserScytheSmall);
+				}
 				break;
 
 			case 4:
-				var rightRotation = new Quaternion();
-				var leftRotation = new Quaternion();
+				if (type.Equals(WeaponType.Plasma))
+				{
+					var rightRotation = new Quaternion();
+					var leftRotation = new Quaternion();
 
-				rightRotation.eulerAngles = new Vector3(0, 0, 25);
-				leftRotation.eulerAngles = new Vector3(0, 0, -25);
+					rightRotation.eulerAngles = new Vector3(0, 0, 25);
+					leftRotation.eulerAngles = new Vector3(0, 0, -25);
 
-				CreateHardPoint(transform.position + new Vector3(0.3f, -0.15f, 0), leftRotation);
-				CreateHardPoint(transform.position + new Vector3(-0.3f, -0.15f, 0), rightRotation);
-				CreateHardPoint(transform.position + new Vector3(0.09f, 0.15f, 0), transform.rotation);
-				CreateHardPoint(transform.position + new Vector3(-0.09f, 0.15f, 0), transform.rotation);
+					CreateHardPoint(transform.position + new Vector3(0.3f, -0.15f, 0), leftRotation, bullet);
+					CreateHardPoint(transform.position + new Vector3(-0.3f, -0.15f, 0), rightRotation, bullet);
+					CreateHardPoint(transform.position + new Vector3(0.09f, 0.15f, 0), transform.rotation, bullet);
+					CreateHardPoint(transform.position + new Vector3(-0.09f, 0.15f, 0), transform.rotation, bullet);
+				}
+				else
+				{
+					CreateHardPoint(transform.position + new Vector3(0, 0.7f, 0), transform.rotation, laserScytheLarge);
+				}
+
 				break;
 
 			default:
@@ -135,20 +179,22 @@ public class Player : MonoBehaviour
 				rightRotation2.eulerAngles = new Vector3(0, 0, 25);
 				leftRotation2.eulerAngles = new Vector3(0, 0, -25);
 
-				CreateHardPoint(transform.position + new Vector3(0.3f, -0.15f, 0), leftRotation2);
-				CreateHardPoint(transform.position + new Vector3(-0.3f, -0.15f, 0), rightRotation2);
-				CreateHardPoint(transform.position + new Vector3(0.3f, -0.15f, 0), transform.rotation);
-				CreateHardPoint(transform.position + new Vector3(-0.3f, -0.15f, 0), transform.rotation);
-				CreateHardPoint(transform.position + new Vector3(0, 0.15f, 0), transform.rotation);
+				CreateHardPoint(transform.position + new Vector3(0.3f, -0.15f, 0), leftRotation2, bullet);
+				CreateHardPoint(transform.position + new Vector3(-0.3f, -0.15f, 0), rightRotation2, bullet);
+				CreateHardPoint(transform.position + new Vector3(0.3f, -0.15f, 0), transform.rotation, bullet);
+				CreateHardPoint(transform.position + new Vector3(-0.3f, -0.15f, 0), transform.rotation, bullet);
+				CreateHardPoint(transform.position + new Vector3(0, 0.15f, 0), transform.rotation, bullet);
 				break;
 		}
 	}
 
-	private void CreateHardPoint(Vector3 position, Quaternion rotation)
+	private void CreateHardPoint(Vector3 position, Quaternion rotation, GameObject bullet)
 	{
 		var hp = Instantiate(hardPoint, position, rotation, transform);
 		var hpScript = hp.GetComponent<HardPoint>();
+
 		hpScript.bullet = bullet;
+
 		hpScript.rateOfFire = 0.3f;
 		hpScript.audioClip = fireSound;
 		hpScript.volume = 0.7f;

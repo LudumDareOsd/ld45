@@ -4,6 +4,7 @@ public class Bullet : MonoBehaviour
 {
 	public Sprite sprite;
 	public float velocity;
+	public int damage = 1;
 
 	public void Start()
 	{
