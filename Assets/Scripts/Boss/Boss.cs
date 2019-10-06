@@ -9,9 +9,10 @@ public enum BossState
 
 public class Boss : MonoBehaviour
 {
-	public int health = 100;
 	public float dodge = 2.0f;
 	public Vector2 maneuverTime = new Vector2(2, 5);
+	public AudioClip appearSound, phase3Sound;
+	public Sprite angryEyes;
 
 	private Eye leftEye, rightEye, bigEye;
 	private bool flashing = false;
@@ -22,8 +23,9 @@ public class Boss : MonoBehaviour
 	private float targetYManeuver = 0.0f;
 	private BossState state = BossState.INITIAL;
 	private GameController gameController;
+	private AudioController audioController;
 	private Rigidbody2D rb;
-	private SpriteRenderer sprite;
+	private SpriteRenderer sprite, eyeSprite;
 
 	//private GameObject spreadHP;
 
@@ -32,9 +34,11 @@ public class Boss : MonoBehaviour
 		leftEye = transform.Find("LeftEye").GetComponent<Eye>();
 		rightEye = transform.Find("RightEye").GetComponent<Eye>();
 		bigEye = transform.Find("BigEye").GetComponent<Eye>();
+		audioController = GameObject.Find("AudioController").GetComponent<AudioController>();
 		gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
 		rb = GetComponent<Rigidbody2D>();
 		sprite = GetComponent<SpriteRenderer>();
+		eyeSprite = transform.Find("Eyes").GetComponent<SpriteRenderer>();
 		NextPhase();
 	}
 
@@ -77,30 +81,35 @@ public class Boss : MonoBehaviour
 		if (state == BossState.INTRO)
 		{
 			StartCoroutine(Appear());
+			audioController.PlaySingle(appearSound, 0.7f);
 		}
 
 		if (state == BossState.PHASE1)
 		{
 			StopCoroutine(Appear());
-			leftEye.ToggleEye();
+			leftEye.ToggleOpen();
 			eyeToggle = 0.0f;
 		}
 
 		if (state == BossState.PHASE2)
 		{
 			StartCoroutine(Evade());
-			leftEye.ToggleTo(false);
-			rightEye.ToggleTo(false);
 			bigEyeToggle = 2.5f;
 		}
 
 		if (state == BossState.PHASE3)
 		{
-			moveSmoothing = 1.7f;
-			leftEye.ToggleTo(true);
-			rightEye.ToggleTo(false);
+			leftEye.Revive();
+			leftEye.SwitchState(EyeState.OPEN);
+			rightEye.Revive();
+			rightEye.SwitchState(EyeState.CLOSED);
+			bigEye.Revive();
+			bigEye.SwitchState(EyeState.CLOSED);
 			eyeToggle = 0.0f;
 			bigEyeToggle = 2.5f;
+			moveSmoothing = 1.7f;
+			audioController.PlaySingle(phase3Sound, 0.7f);
+			eyeSprite.sprite = angryEyes;
 		}
 
 		else if (state == BossState.DEAD)
@@ -118,14 +127,9 @@ public class Boss : MonoBehaviour
 	{
 		if (eyeToggle > 5.0f)
 		{
-			leftEye.ToggleEye();
-			rightEye.ToggleEye();
+			leftEye.ToggleOpen();
+			rightEye.ToggleOpen();
 			eyeToggle = 0.0f;
-		}
-
-		if (leftEye.IsDead() && rightEye.IsDead())
-		{
-			NextPhase();
 		}
 	}
 
@@ -133,7 +137,7 @@ public class Boss : MonoBehaviour
 	{
 		if (bigEyeToggle > 5.0f)
 		{
-			bigEye.ToggleEye();
+			bigEye.ToggleOpen();
 			bigEyeToggle = 0.0f;
 		}
 	}
@@ -142,16 +146,19 @@ public class Boss : MonoBehaviour
 	{
 		if (eyeToggle > 5.0f)
 		{
-			leftEye.ToggleEye();
-			rightEye.ToggleEye();
+			leftEye.ToggleOpen();
+			rightEye.ToggleOpen();
 			eyeToggle = 0.0f;
 		}
 
 		if (bigEyeToggle > 5.0f)
 		{
-			bigEye.ToggleEye();
+			bigEye.ToggleOpen();
 			bigEyeToggle = 0.0f;
 		}
+
+		if (leftEye.IsDead() && rightEye.IsDead() && bigEye.IsDead())
+			NextPhase();
 	}
 
 	void FixedUpdate()
@@ -177,21 +184,19 @@ public class Boss : MonoBehaviour
 			case BossState.INTRO:
 				return;
 			case BossState.PHASE1:
-				if (health < 81) NextPhase();
+				if (leftEye.IsDead() && rightEye.IsDead())
+					NextPhase();
 				break;
 			case BossState.PHASE2:
-				if (health < 51) NextPhase();
+				if (leftEye.IsDead() && rightEye.IsDead() && bigEye.IsDead())
+					NextPhase();
 				break;
 			case BossState.PHASE3:
-				if (health < 1) NextPhase();
-				break;
-			case BossState.DEAD:
-				return;
-			default:
+				if (leftEye.IsDead() && rightEye.IsDead() && bigEye.IsDead())
+					NextPhase();
 				break;
 		}
 		if (!flashing) StartCoroutine(Flash());
-		health--;
 	}
 
 	IEnumerator Flash()
@@ -230,24 +235,5 @@ public class Boss : MonoBehaviour
 			yield return new WaitForSeconds(Random.Range(1.0f, 3.0f));
 		}
 	}
-
-	//IEnumerator SpreadShot()
-	//{
-	//	while (true)
-	//	{
-	//		// want a angle between like 100 and 260?
-	//		var angle = 100 + (spreadtime * 32);
-	//		if (angle > 260)
-	//		{
-	//			spreadtime = 0.0f;
-	//			angle = 100;
-	//			//yield return new WaitForSeconds(2.0f);
-	//		}
-	//		bigEye.transform.Find("SpreadHP").transform.rotation = Quaternion.Euler(0, 0, angle);
-	//		//bigEye.GetComponentInChildren<HardPoint>().Fire();
-	//		spreadtime += 0.1f;
-	//		yield return new WaitForSeconds(0.1f);
-	//	}
-	//}
 
 }
