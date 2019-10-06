@@ -65,6 +65,8 @@ public class Player : MonoBehaviour
 					Destroy(gameObject);
 					Instantiate(explosion, transform.position + new Vector3(-1, -1, 0), transform.rotation);
 					audioController.PlaySingle(playerBreak, 1f);
+					lifes--;
+					gameController.RenderLife(lifes);
 				}
 				else
 				{

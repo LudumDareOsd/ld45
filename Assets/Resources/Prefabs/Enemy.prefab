@@ -47,6 +47,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 779322e1026f03d488d42d09a5f8de87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bloodsplosion: {fileID: 5508426288739261690, guid: bee2c482c3c13aa4084ad44f2097c22d,
+    type: 3}
+  deathSound: {fileID: 8300000, guid: f3bd3fd630294614c87fc49102008304, type: 3}
 --- !u!212 &8398117574347247946
 SpriteRenderer:
   m_ObjectHideFlags: 0

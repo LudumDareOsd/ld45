@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class EnemyBehaviorEye : MonoBehaviour
 {
+	public GameObject bloodsplosion;
+	public AudioClip deathSound;
+
 	private LTBezierPath[] enemyPaths;
 	private Rigidbody2D rb;
 	private int life = 3;
@@ -11,9 +14,11 @@ public class EnemyBehaviorEye : MonoBehaviour
 	private float lifetime_max = 7.0f;
 	private int wave;
 	private GameController gameController;
+	private AudioController audioController;
 
 	void Start()
 	{
+		audioController = GameObject.Find("AudioController").GetComponent<AudioController>();
 		gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
 		wave = gameController.GetWave();
 		rb = GetComponent<Rigidbody2D>();
@@ -34,7 +39,8 @@ public class EnemyBehaviorEye : MonoBehaviour
 		life--;
 		if (life < 1)
 		{
-			Debug.Log("Kill eye");
+			Instantiate(bloodsplosion, transform.position, transform.rotation);
+			audioController.PlaySingle(deathSound, 0.5f);
 			gameController.SpawnPowerup(gameObject);
 			Destroy(gameObject);
 		}
