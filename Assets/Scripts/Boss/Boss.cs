@@ -121,6 +121,7 @@ public class Boss : MonoBehaviour
 
 		else if (state == BossState.DEAD)
 		{
+			gameController.Win();
 			Destroy(gameObject);
 		}
 	}

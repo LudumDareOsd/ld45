@@ -64,7 +64,6 @@ public class Player : MonoBehaviour
 		}
 		else
 		{
-
 			if (!immortal)
 			{
 				if (lifes <= 1)
