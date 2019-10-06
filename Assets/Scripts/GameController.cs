@@ -111,8 +111,7 @@ public class GameController : MonoBehaviour
 		yield return new WaitForSeconds(4);
 		while (true)
 		{
-			Debug.Log("Spawning wave " + wave.ToString());
-
+			//Debug.Log("Spawning wave " + wave.ToString());
 			if (wave == bosswave)
 			{
 				Instantiate(bossPrefab);

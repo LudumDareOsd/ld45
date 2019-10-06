@@ -26,8 +26,8 @@ public class EnemyBehaviorEye : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		rb.velocity = new Vector2(0, -2.3f);
 		lifetime += Time.deltaTime;
+		rb.velocity = new Vector2(0, -2.3f);
 		if (lifetime > lifetime_max)
 		{
 			Destroy(gameObject);

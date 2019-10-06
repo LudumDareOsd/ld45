@@ -4,14 +4,15 @@ using UnityEngine;
 
 public enum BossState
 {
-	INITIAL, INTRO, PHASE1, PHASE2, PHASE3, DEAD
+	INITIAL, INTRO, PHASE1, PHASE2, REVIVE, PHASE3, DEAD
 }
 
 public class Boss : MonoBehaviour
 {
-	public int health = 100;
 	public float dodge = 2.0f;
 	public Vector2 maneuverTime = new Vector2(2, 5);
+	public AudioClip appearSound, phase3Sound;
+	public Sprite angryEyes;
 
 	private Eye leftEye, rightEye, bigEye;
 	private bool flashing = false;
@@ -22,8 +23,9 @@ public class Boss : MonoBehaviour
 	private float targetYManeuver = 0.0f;
 	private BossState state = BossState.INITIAL;
 	private GameController gameController;
+	private AudioController audioController;
 	private Rigidbody2D rb;
-	private SpriteRenderer sprite;
+	private SpriteRenderer sprite, eyeSprite;
 
 	//private GameObject spreadHP;
 
@@ -32,9 +34,11 @@ public class Boss : MonoBehaviour
 		leftEye = transform.Find("LeftEye").GetComponent<Eye>();
 		rightEye = transform.Find("RightEye").GetComponent<Eye>();
 		bigEye = transform.Find("BigEye").GetComponent<Eye>();
+		audioController = GameObject.Find("AudioController").GetComponent<AudioController>();
 		gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
 		rb = GetComponent<Rigidbody2D>();
 		sprite = GetComponent<SpriteRenderer>();
+		eyeSprite = transform.Find("Eyes").GetComponent<SpriteRenderer>();
 		NextPhase();
 	}
 
@@ -55,6 +59,9 @@ public class Boss : MonoBehaviour
 				break;
 			case BossState.PHASE2:
 				Phase2();
+				break;
+			case BossState.REVIVE:
+				Revive();
 				break;
 			case BossState.PHASE3:
 				Phase3();
@@ -77,30 +84,39 @@ public class Boss : MonoBehaviour
 		if (state == BossState.INTRO)
 		{
 			StartCoroutine(Appear());
+			audioController.PlaySingle(appearSound, 0.7f);
 		}
 
 		if (state == BossState.PHASE1)
 		{
 			StopCoroutine(Appear());
-			leftEye.ToggleEye();
+			leftEye.ToggleOpen();
 			eyeToggle = 0.0f;
 		}
 
 		if (state == BossState.PHASE2)
 		{
 			StartCoroutine(Evade());
-			leftEye.ToggleTo(false);
-			rightEye.ToggleTo(false);
 			bigEyeToggle = 2.5f;
+		}
+
+		if (state == BossState.REVIVE)
+		{
+			StopCoroutine(Evade());
+			StartCoroutine(Regenerate());
 		}
 
 		if (state == BossState.PHASE3)
 		{
-			moveSmoothing = 1.7f;
-			leftEye.ToggleTo(true);
-			rightEye.ToggleTo(false);
+			StartCoroutine(Evade());
+			StopCoroutine(Regenerate());
+			leftEye.SwitchState(EyeState.OPEN);
+			rightEye.SwitchState(EyeState.CLOSED);
+			bigEye.SwitchState(EyeState.CLOSED);
 			eyeToggle = 0.0f;
 			bigEyeToggle = 2.5f;
+			moveSmoothing = 1.7f;
+			eyeSprite.sprite = angryEyes;
 		}
 
 		else if (state == BossState.DEAD)
@@ -118,14 +134,9 @@ public class Boss : MonoBehaviour
 	{
 		if (eyeToggle > 5.0f)
 		{
-			leftEye.ToggleEye();
-			rightEye.ToggleEye();
+			leftEye.ToggleOpen();
+			rightEye.ToggleOpen();
 			eyeToggle = 0.0f;
-		}
-
-		if (leftEye.IsDead() && rightEye.IsDead())
-		{
-			NextPhase();
 		}
 	}
 
@@ -133,25 +144,33 @@ public class Boss : MonoBehaviour
 	{
 		if (bigEyeToggle > 5.0f)
 		{
-			bigEye.ToggleEye();
+			bigEye.ToggleOpen();
 			bigEyeToggle = 0.0f;
 		}
+	}
+
+	void Revive()
+	{
+
 	}
 
 	void Phase3()
 	{
 		if (eyeToggle > 5.0f)
 		{
-			leftEye.ToggleEye();
-			rightEye.ToggleEye();
+			leftEye.ToggleOpen();
+			rightEye.ToggleOpen();
 			eyeToggle = 0.0f;
 		}
 
 		if (bigEyeToggle > 5.0f)
 		{
-			bigEye.ToggleEye();
+			bigEye.ToggleOpen();
 			bigEyeToggle = 0.0f;
 		}
+
+		if (leftEye.IsDead() && rightEye.IsDead() && bigEye.IsDead())
+			NextPhase();
 	}
 
 	void FixedUpdate()
@@ -177,27 +196,24 @@ public class Boss : MonoBehaviour
 			case BossState.INTRO:
 				return;
 			case BossState.PHASE1:
-				if (health < 81) NextPhase();
+				if (leftEye.IsDead() && rightEye.IsDead())
+					NextPhase();
 				break;
 			case BossState.PHASE2:
-				if (health < 51) NextPhase();
+				if (leftEye.IsDead() && rightEye.IsDead() && bigEye.IsDead())
+					NextPhase();
 				break;
 			case BossState.PHASE3:
-				if (health < 1) NextPhase();
-				break;
-			case BossState.DEAD:
-				return;
-			default:
+				if (leftEye.IsDead() && rightEye.IsDead() && bigEye.IsDead())
+					NextPhase();
 				break;
 		}
-		if (!flashing) StartCoroutine(Flash());
-		health--;
+		if (!flashing) StartCoroutine(Flash(new Color32(255, 166, 166, 130)));
 	}
 
-	IEnumerator Flash()
+	IEnumerator Flash(Color32 flashcolor)
 	{
 		flashing = true;
-		var flashcolor = new Color32(255,166,166,130);
 		for (var n = 0; n < 4; n++)
 		{
 			sprite.material.color = Color.white;
@@ -231,23 +247,19 @@ public class Boss : MonoBehaviour
 		}
 	}
 
-	//IEnumerator SpreadShot()
-	//{
-	//	while (true)
-	//	{
-	//		// want a angle between like 100 and 260?
-	//		var angle = 100 + (spreadtime * 32);
-	//		if (angle > 260)
-	//		{
-	//			spreadtime = 0.0f;
-	//			angle = 100;
-	//			//yield return new WaitForSeconds(2.0f);
-	//		}
-	//		bigEye.transform.Find("SpreadHP").transform.rotation = Quaternion.Euler(0, 0, angle);
-	//		//bigEye.GetComponentInChildren<HardPoint>().Fire();
-	//		spreadtime += 0.1f;
-	//		yield return new WaitForSeconds(0.1f);
-	//	}
-	//}
+	IEnumerator Regenerate()
+	{
+		targetXManeuver = 0;
+		yield return new WaitForSeconds(2);
+		audioController.PlaySingle(phase3Sound, 0.7f);
+		yield return new WaitForSeconds(1);
+		StartCoroutine(Flash(new Color32(255, 44, 244, 255)));
+		yield return new WaitForSeconds(1);
+		leftEye.Revive();
+		rightEye.Revive();
+		bigEye.Revive();
+		yield return new WaitForSeconds(1);
+		NextPhase();
+	}
 
 }
