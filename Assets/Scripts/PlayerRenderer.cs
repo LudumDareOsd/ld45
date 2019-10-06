@@ -15,7 +15,7 @@ public class PlayerRenderer : MonoBehaviour
 	public GameObject powerlevel;
 
 	private PlayerState state = PlayerState.Straight;
-	private SpriteRenderer shipRenderer;
+	public SpriteRenderer shipRenderer;
 	private SpriteRenderer powerRenderer;
 
 	public void Awake()
