@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-	private int wave, bosswave = 3;
+	private int wave, bosswave = 1;
 	private Vector3 spawnPos;
 	private Player player;
 	private GameObject enemyPrefab, bossPrefab, powerupPrefab, enemiesContainer;
@@ -41,7 +41,7 @@ public class GameController : MonoBehaviour
 		{
 			Debug.Log("Spawning wave " + wave.ToString());
 
-			if (wave == 3)
+			if (wave == bosswave)
 			{
 				var boss = Instantiate(bossPrefab);
 			}

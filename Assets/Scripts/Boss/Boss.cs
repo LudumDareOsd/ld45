@@ -9,10 +9,12 @@ public enum BossState
 
 public class Boss : MonoBehaviour
 {
+	public int health = 100;
 	public float dodge = 2.0f;
 	public Vector2 maneuverTime = new Vector2(2, 5);
 
 	private Eye leftEye, rightEye, bigEye;
+	private bool flashing = false;
 	private float lifetime = 0.0f;
 	private float eyeToggle = 0.0f;
 	private float bigEyeToggle = 2.5f;
@@ -124,10 +126,10 @@ public class Boss : MonoBehaviour
 			NextPhase();
 		}
 
-		if (lifetime > 20.0f)
-		{
-			NextPhase();
-		}
+		//if (lifetime > 20.0f)
+		//{
+		//	NextPhase();
+		//}
 	}
 
 	void Phase2()
@@ -138,10 +140,10 @@ public class Boss : MonoBehaviour
 			bigEyeToggle = 0.0f;
 		}
 
-		if (lifetime > 40.0f)
-		{
-			NextPhase();
-		}
+		//if (lifetime > 40.0f)
+		//{
+		//	NextPhase();
+		//}
 	}
 
 	void Phase3()
@@ -159,10 +161,10 @@ public class Boss : MonoBehaviour
 			bigEyeToggle = 0.0f;
 		}
 
-		if (lifetime > 60.0f)
-		{
-			//NextPhase();
-		}
+		//if (lifetime > 60.0f)
+		//{
+		//	//NextPhase();
+		//}
 	}
 
 	void FixedUpdate()
@@ -181,6 +183,45 @@ public class Boss : MonoBehaviour
 		);
 
 		//rb.rotation = Quaternion.Euler(0.0f, 0.0f, rb.velocity.x * -tilt);
+	}
+
+	public void TakeDamage()
+	{
+		switch (state)
+		{
+			case BossState.INTRO:
+				return;
+			case BossState.PHASE1:
+				if (health < 81) NextPhase();
+				break;
+			case BossState.PHASE2:
+				if (health < 51) NextPhase();
+				break;
+			case BossState.PHASE3:
+				if (health < 1) NextPhase();
+				break;
+			case BossState.DEAD:
+				return;
+			default:
+				break;
+		}
+		if (!flashing) StartCoroutine(Flash());
+		health--;
+	}
+
+	IEnumerator Flash()
+	{
+		flashing = true;
+		var flashcolor = new Color32(255,255,255,100);
+		for (var n = 0; n < 5; n++)
+		{
+			GetComponent<SpriteRenderer>().material.color = Color.white;
+			yield return new WaitForSeconds(.05f);
+			GetComponent<SpriteRenderer>().material.color = flashcolor;
+			yield return new WaitForSeconds(.05f);
+		}
+		GetComponent<SpriteRenderer>().material.color = Color.white;
+		flashing = false;
 	}
 
 	IEnumerator Appear()
