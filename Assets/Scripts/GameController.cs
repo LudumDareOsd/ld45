@@ -5,20 +5,23 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
 	private int wave, bosswave = 1;
-	private Vector3 spawnPos;
+	private Vector3 spawnPos, spawnPosEye;
 	private Player player;
-	private GameObject enemyPrefab, bossPrefab, powerupPrefab, enemiesContainer;
+	private GameObject enemyPrefab, enemyEyePrefab, bossPrefab, powerupPrefab, enemiesContainer;
 	private List<GameObject> enemies = new List<GameObject>();
 	
 	void Start()
 	{
 		powerupPrefab = (GameObject)Resources.Load("Prefabs/Powerup", typeof(GameObject));
 		enemyPrefab = (GameObject)Resources.Load("Prefabs/Enemy", typeof(GameObject));
+		enemyEyePrefab = (GameObject)Resources.Load("Prefabs/EnemyEye", typeof(GameObject));
 		bossPrefab = (GameObject)Resources.Load("Prefabs/Boss", typeof(GameObject));
 		enemiesContainer = GameObject.FindWithTag("Enemies");
 		player = GameObject.FindWithTag("Player").GetComponent<Player>();
 		spawnPos = Camera.main.ViewportToWorldPoint(new Vector3(-1.0f, 1.1f, 0.0f));
+		spawnPosEye = Camera.main.ViewportToWorldPoint(new Vector3(1.0f, 1.1f, 0.0f));
 		StartCoroutine(SpawnWaves());
+		StartCoroutine(SpawnEyes());
 		Restart();
 	}
 
@@ -34,6 +37,18 @@ public class GameController : MonoBehaviour
 		Restart();
 	}
 
+	IEnumerator SpawnEyes()
+	{
+		yield return new WaitForSeconds(8);
+		while (true)
+		{
+			yield return new WaitForSeconds(Random.Range(5, 10 + bosswave * 2 - wave * 2));
+			var spawnPosition = new Vector3(Random.Range(0.0f, spawnPosEye.x - 0.0f), spawnPosEye.y, 0.0f);
+			var enemy = Instantiate(enemyEyePrefab, spawnPosition, Quaternion.identity);
+			enemy.transform.SetParent(enemiesContainer.transform);
+		}
+	}
+
 	IEnumerator SpawnWaves()
 	{
 		yield return new WaitForSeconds(4);
@@ -43,19 +58,19 @@ public class GameController : MonoBehaviour
 
 			if (wave == bosswave)
 			{
-				var boss = Instantiate(bossPrefab);
+				Instantiate(bossPrefab);
 			}
 
 			for (var i = 0; i < wave; i++)
 			{
 				var spawnPosition = new Vector3(spawnPos.x, spawnPos.y, 0.0f);
-				Quaternion spawnRotation = Quaternion.identity;
-				var enemy = Instantiate(enemyPrefab, spawnPosition, spawnRotation);
+				//var enemy = Instantiate(enemyPrefab, spawnPosition, spawnRotation);
+				var enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
 				enemy.transform.SetParent(enemiesContainer.transform);
 				enemies.Add(enemy);
 				yield return new WaitForSeconds(1);
 			}
-			yield return new WaitForSeconds(13);
+			yield return new WaitForSeconds(10);
 			enemies.Clear();
 			wave += (wave > bosswave) ? 0 : 1;
 		}

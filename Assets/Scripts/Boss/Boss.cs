@@ -15,7 +15,7 @@ public class Boss : MonoBehaviour
 
 	private Eye leftEye, rightEye, bigEye;
 	private bool flashing = false;
-	private float lifetime = 0.0f;
+	private float lifetime = 0.0f, moveSmoothing = 0.9f;
 	private float eyeToggle = 0.0f;
 	private float bigEyeToggle = 2.5f;
 	private float targetXManeuver = 0.0f;
@@ -23,6 +23,7 @@ public class Boss : MonoBehaviour
 	private BossState state = BossState.INITIAL;
 	private GameController gameController;
 	private Rigidbody2D rb;
+	private SpriteRenderer sprite;
 
 	//private GameObject spreadHP;
 
@@ -31,9 +32,9 @@ public class Boss : MonoBehaviour
 		leftEye = transform.Find("LeftEye").GetComponent<Eye>();
 		rightEye = transform.Find("RightEye").GetComponent<Eye>();
 		bigEye = transform.Find("BigEye").GetComponent<Eye>();
-		//spreadHP = transform.Find("SpreadHP").gameObject;
 		gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
 		rb = GetComponent<Rigidbody2D>();
+		sprite = GetComponent<SpriteRenderer>();
 		NextPhase();
 	}
 
@@ -95,6 +96,7 @@ public class Boss : MonoBehaviour
 
 		if (state == BossState.PHASE3)
 		{
+			moveSmoothing = 1.7f;
 			leftEye.ToggleTo(true);
 			rightEye.ToggleTo(false);
 			eyeToggle = 0.0f;
@@ -125,11 +127,6 @@ public class Boss : MonoBehaviour
 		{
 			NextPhase();
 		}
-
-		//if (lifetime > 20.0f)
-		//{
-		//	NextPhase();
-		//}
 	}
 
 	void Phase2()
@@ -139,11 +136,6 @@ public class Boss : MonoBehaviour
 			bigEye.ToggleEye();
 			bigEyeToggle = 0.0f;
 		}
-
-		//if (lifetime > 40.0f)
-		//{
-		//	NextPhase();
-		//}
 	}
 
 	void Phase3()
@@ -160,11 +152,6 @@ public class Boss : MonoBehaviour
 			bigEye.ToggleEye();
 			bigEyeToggle = 0.0f;
 		}
-
-		//if (lifetime > 60.0f)
-		//{
-		//	//NextPhase();
-		//}
 	}
 
 	void FixedUpdate()
@@ -172,8 +159,8 @@ public class Boss : MonoBehaviour
 		var camMin = Camera.main.ViewportToWorldPoint(new Vector3(0.0f, 0.0f, 0.0f));
 		var camMax = Camera.main.ViewportToWorldPoint(new Vector3(1.0f, 1.0f, 0.0f));
 
-		var newXManeuver = Mathf.MoveTowards(rb.velocity.x, targetXManeuver, Time.deltaTime * 0.9f);
-		var newYManeuver = Mathf.MoveTowards(rb.velocity.y, targetYManeuver, Time.deltaTime * 0.9f);
+		var newXManeuver = Mathf.MoveTowards(rb.velocity.x, targetXManeuver, Time.deltaTime * moveSmoothing);
+		var newYManeuver = Mathf.MoveTowards(rb.velocity.y, targetYManeuver, Time.deltaTime * moveSmoothing);
 		rb.velocity = new Vector3(newXManeuver, newYManeuver, 0.0f);
 		rb.position = new Vector3
 		(
@@ -181,8 +168,6 @@ public class Boss : MonoBehaviour
 			Mathf.Clamp(rb.position.y, camMin.y - 100.0f, camMax.y + 100.0f),
 			0.0f
 		);
-
-		//rb.rotation = Quaternion.Euler(0.0f, 0.0f, rb.velocity.x * -tilt);
 	}
 
 	public void TakeDamage()
@@ -212,15 +197,15 @@ public class Boss : MonoBehaviour
 	IEnumerator Flash()
 	{
 		flashing = true;
-		var flashcolor = new Color32(255,255,255,100);
-		for (var n = 0; n < 5; n++)
+		var flashcolor = new Color32(255,166,166,130);
+		for (var n = 0; n < 4; n++)
 		{
-			GetComponent<SpriteRenderer>().material.color = Color.white;
-			yield return new WaitForSeconds(.05f);
-			GetComponent<SpriteRenderer>().material.color = flashcolor;
-			yield return new WaitForSeconds(.05f);
+			sprite.material.color = Color.white;
+			yield return new WaitForSeconds(.03f);
+			sprite.material.color = flashcolor;
+			yield return new WaitForSeconds(.03f);
 		}
-		GetComponent<SpriteRenderer>().material.color = Color.white;
+		sprite.material.color = Color.white;
 		flashing = false;
 	}
 
