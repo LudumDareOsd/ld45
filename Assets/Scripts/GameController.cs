@@ -4,12 +4,16 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+	public GameObject lifePrefab;
+
 	private int wave, bosswave = 1;
 	private Vector3 spawnPos, spawnPosEye;
 	private Player player;
 	private GameObject enemyPrefab, enemyEyePrefab, bossPrefab, powerupPrefab, enemiesContainer;
 	private List<GameObject> enemies = new List<GameObject>();
-	
+
+	private GameObject lifeParent;
+
 	void Start()
 	{
 		powerupPrefab = (GameObject)Resources.Load("Prefabs/Powerup", typeof(GameObject));
@@ -23,6 +27,10 @@ public class GameController : MonoBehaviour
 		StartCoroutine(SpawnWaves());
 		StartCoroutine(SpawnEyes());
 		Restart();
+
+		lifeParent = GameObject.Find("Lifes");
+
+		RenderLife(3);
 	}
 
 	void Restart()
@@ -86,4 +94,17 @@ public class GameController : MonoBehaviour
 	}
 
 	public int GetWave() { return wave; }
+
+	public void RenderLife(int lifes) {
+
+		foreach (Transform child in lifeParent.transform)
+		{
+			Destroy(child.gameObject);
+		}
+
+		for (var i = 0; i < lifes; i++) {
+			var tempLife = Instantiate(lifePrefab, new Vector3(32 + (40 * i), Screen.height - 32, 0), lifeParent.transform.rotation, lifeParent.transform);
+		}
+
+	}
 }
