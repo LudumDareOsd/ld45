@@ -10,13 +10,14 @@ public class Eye : MonoBehaviour
 {
 	public int health = 30;
 	public int reviveHealth = 40;
-	//public Sprite closeSprite, deadSprite, angrySprite;
+	public AudioClip deathSound;
 
 	private Collider2D coll;
 	private float spreadtime = 0.0f;
 	private HardPoint hp;
 	private Boss boss;
 	private SpriteRenderer closedSprite, deadSprite;
+	private AudioController audioController;
 	private EyeState state;
 
 	void Start()
@@ -26,6 +27,7 @@ public class Eye : MonoBehaviour
 		deadSprite = transform.Find("Dead").GetComponent<SpriteRenderer>();
 		coll = GetComponent<Collider2D>();
 		hp = GetComponentInChildren<HardPoint>();
+		audioController = GameObject.Find("AudioController").GetComponent<AudioController>();
 		SwitchState(EyeState.CLOSED);
 	}
 
@@ -67,6 +69,7 @@ public class Eye : MonoBehaviour
 				coll.enabled = false;
 				closedSprite.enabled = false;
 				deadSprite.enabled = true;
+				audioController.PlaySingle(deathSound, 0.7f);
 				break;
 			default:
 				break;

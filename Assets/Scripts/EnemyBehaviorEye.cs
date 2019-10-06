@@ -11,16 +11,14 @@ public class EnemyBehaviorEye : MonoBehaviour
 	private Rigidbody2D rb;
 	private int life = 3;
 	private float lifetime = 0.0f;
-	private float lifetime_max = 7.0f;
-	private int wave;
-	private GameController gameController;
+	private float lifetime_max = 9.0f;
+	//private GameController gameController;
 	private AudioController audioController;
 
 	void Start()
 	{
 		audioController = GameObject.Find("AudioController").GetComponent<AudioController>();
-		gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
-		wave = gameController.GetWave();
+		//gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
 		rb = GetComponent<Rigidbody2D>();
 	}
 
@@ -41,7 +39,6 @@ public class EnemyBehaviorEye : MonoBehaviour
 		{
 			Instantiate(bloodsplosion, transform.position, transform.rotation);
 			audioController.PlaySingle(deathSound, 0.3f);
-			gameController.SpawnPowerup(gameObject);
 			Destroy(gameObject);
 		}
 	}

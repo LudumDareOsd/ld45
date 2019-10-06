@@ -249,17 +249,44 @@ public class Boss : MonoBehaviour
 	IEnumerator Regenerate()
 	{
 		StopCoroutine(Evade());
-		targetXManeuver = 0; moveSmoothing = 0.0f;
-		yield return new WaitForSeconds(6);
-		audioController.PlaySingle(phase3Sound, 0.7f);
+		StartCoroutine(Middle());
+		yield return new WaitForSeconds(2);
 		StartCoroutine(Flash(new Color32(255, 44, 244, 255)));
+		targetYManeuver = 0.3f;
+		yield return new WaitForSeconds(10);
+		audioController.PlaySingle(phase3Sound, 0.7f);
 		leftEye.Revive();
 		rightEye.Revive();
 		bigEye.Revive();
+		targetYManeuver = -0.3f;
+		yield return new WaitForSeconds(10);
+		targetYManeuver = 0;
 		yield return new WaitForSeconds(4);
+		StopCoroutine(Middle());
 		StartCoroutine(Evade());
-		moveSmoothing = 1.9f;
 		NextPhase();
 	}
+
+	IEnumerator Middle()
+	{
+		var middle = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 1.0f, 0.0f));
+		while (true)
+		{
+			if (transform.position.x > middle.x + 0.04f)
+			{
+				targetXManeuver = -2;
+			}
+			else if (transform.position.x < middle.x - 0.04f)
+			{
+				targetXManeuver = 2;
+			}
+			else
+			{
+				targetXManeuver = 0;
+			}
+			yield return new WaitForSeconds(0.2f);
+		}
+	}
+
 
 }

@@ -97,8 +97,8 @@ public class GameController : MonoBehaviour
 		yield return new WaitForSeconds(8);
 		while (true)
 		{
-			yield return new WaitForSeconds(Random.Range(5, 10 + bosswave * 2 - wave * 2));
-			var spawnPosition = new Vector3(Random.Range(0.0f, spawnPosEye.x - 0.0f), spawnPosEye.y, 0.0f);
+			yield return new WaitForSeconds(Random.Range(5, 10 + bosswave * 2 - GetWave() * 2));
+			var spawnPosition = new Vector3(Random.Range(-spawnPosEye.x, spawnPosEye.x), spawnPosEye.y, 0.0f);
 			var enemy = Instantiate(enemyEyePrefab, spawnPosition, Quaternion.identity);
 			enemy.transform.SetParent(enemiesContainer.transform);
 		}
@@ -115,7 +115,7 @@ public class GameController : MonoBehaviour
 				Instantiate(bossPrefab);
 			}
 
-			for (var i = 0; i < (wave > bosswave ? bosswave : wave); i++)
+			for (var i = 0; i < GetWave(); i++)
 			{
 				var spawnPosition = new Vector3(spawnPos.x, spawnPos.y, 0.0f);
 				//var enemy = Instantiate(enemyPrefab, spawnPosition, spawnRotation);
@@ -128,17 +128,17 @@ public class GameController : MonoBehaviour
 		}
 	}
 
-	public void SpawnPowerup(GameObject enemy, int wave = 1)
+	public void SpawnPowerup(GameObject enemy, int mobwave = 1)
 	{
 		//10 - 5 / 10
-		var spawnChance = Random.Range(0.0f, 1.1f - ((bosswave - wave) / bosswave));
+		var spawnChance = Random.Range(0.0f, 0.9f - ((bosswave - mobwave) / bosswave));
 		if (spawnChance < 0.1f)
 		{
 			Instantiate(powerupPrefab, enemy.transform.position, enemy.transform.rotation);
 		}
 	}
 
-	public int GetWave() { return wave; }
+	public int GetWave(bool real = false) { return (wave > bosswave && !real ? bosswave : wave); }
 
 	public void RenderLife(int lifes)
 	{

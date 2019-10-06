@@ -23,8 +23,7 @@ public class EnemyBehavior : MonoBehaviour
 		audioController = GameObject.Find("AudioController").GetComponent<AudioController>();
 		gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
 		hardpoint = GetComponentInChildren<HardPoint>();
-		wave = gameController.GetWave();
-		Debug.Log("Spawning enemy for wave " + wave.ToString());
+		wave = gameController.GetWave(true);
 		rb = GetComponent<Rigidbody2D>();
 		shootDelay = Random.Range(0.0f, 1.0f);
 
