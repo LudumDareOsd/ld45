@@ -6,8 +6,11 @@ public class Player : MonoBehaviour
 {
 	public GameObject hardPoint;
 	public GameObject bullet;
+	public GameObject explosion;
 	public AudioClip fireSound;
 	public AudioClip powerUpSound;
+	public AudioClip impact;
+	public AudioClip playerBreak;
 
 	private PlayerRenderer playerRenderer;
 	private float moveSpeed = 600f;
@@ -54,11 +57,23 @@ public class Player : MonoBehaviour
 		}
 		else
 		{
+
 			if (!immortal)
 			{
-				StartCoroutine(Flash());
-				lifes--;
-				gameController.RenderLife(lifes);
+				if (lifes <= 1)
+				{
+					Destroy(gameObject);
+					Instantiate(explosion, transform.position + new Vector3(-1, -1, 0), transform.rotation);
+					audioController.PlaySingle(playerBreak, 1f);
+				}
+				else
+				{
+					StartCoroutine(Flash());
+					lifes--;
+					gameController.RenderLife(lifes);
+					audioController.PlaySingleHigh(playerBreak, 0.3f);
+					Instantiate(explosion, transform.position + new Vector3(-1, -1, 0), transform.rotation);
+				}
 			}
 		}
 	}

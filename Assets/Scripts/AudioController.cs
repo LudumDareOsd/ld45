@@ -26,6 +26,36 @@ public class AudioController : MonoBehaviour
 		return audioSrc;
 	}
 
+	public AudioSource PlaySingleLow(AudioClip clip, float volume)
+	{
+
+		var audioSrc = GetSource().GetComponent<AudioSource>();
+		audioSrc.clip = clip;
+		audioSrc.volume = volume;
+		audioSrc.spatialBlend = 0;
+		audioSrc.dopplerLevel = 0;
+		audioSrc.spread = 0;
+		audioSrc.pitch = 0.5f;
+		audioSrc.Play();
+
+		return audioSrc;
+	}
+
+	public AudioSource PlaySingleHigh(AudioClip clip, float volume)
+	{
+
+		var audioSrc = GetSource().GetComponent<AudioSource>();
+		audioSrc.clip = clip;
+		audioSrc.volume = volume;
+		audioSrc.spatialBlend = 0;
+		audioSrc.dopplerLevel = 0;
+		audioSrc.spread = 0;
+		audioSrc.pitch = 1.5f;
+		audioSrc.Play();
+
+		return audioSrc;
+	}
+
 	private GameObject GetSource()
 	{
 		var source = sources.Find(it => !it.GetComponent<AudioSource>().isPlaying);
