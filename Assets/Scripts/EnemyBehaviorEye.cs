@@ -34,7 +34,7 @@ public class EnemyBehaviorEye : MonoBehaviour
 
 	public void OnTriggerEnter2D(Collider2D collision)
 	{
-		life--;
+		life -= collision.gameObject.GetComponent<Bullet>().damage;
 		if (life < 1)
 		{
 			Instantiate(bloodsplosion, transform.position, transform.rotation);

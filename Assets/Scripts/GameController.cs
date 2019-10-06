@@ -136,11 +136,11 @@ public class GameController : MonoBehaviour
 
 	public void SpawnPowerup(GameObject enemy, int mobwave = 1)
 	{
-		//10 - 5 / 10
-		var spawnChance = Random.Range(0.0f, 0.9f - ((bosswave - mobwave) / bosswave));
+		var spawnChance = Random.Range(0.0f, 0.8f - ((bosswave - mobwave) / bosswave));
 		if (spawnChance < 0.1f)
 		{
-			Instantiate(powerupPrefab, enemy.transform.position, enemy.transform.rotation);
+			var powerup = Instantiate(powerupPrefab, enemy.transform.position, enemy.transform.rotation);
+			powerup.GetComponent<Powerup>().weaponType = Random.Range(1, 2) == 1 ? WeaponType.Plasma : WeaponType.Beam;
 		}
 	}
 

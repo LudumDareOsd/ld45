@@ -55,16 +55,14 @@ public class EnemyBehavior : MonoBehaviour
 	{
 		if (collision.CompareTag("PlayerBullet"))
 		{
+			//collision.gameObject.GetComponent<Bullet>().damage
+			life -= collision.gameObject.GetComponent<Bullet>().damage;
 			if (life < 1)
 			{
 				gameController.SpawnPowerup(gameObject, wave);
 				Instantiate(bloodsplosion, transform.position, transform.rotation);
 				audioController.PlaySingle(deathSound, 0.3f);
 				Destroy(gameObject);
-			}
-			else
-			{
-				life--;
 			}
 		}
 	}

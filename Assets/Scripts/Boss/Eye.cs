@@ -81,7 +81,7 @@ public class Eye : MonoBehaviour
 	{
 		if (collision.CompareTag("PlayerBullet"))
 		{
-			health--;
+			health -= collision.gameObject.GetComponent<Bullet>().damage;
 			if (health < 1)
 			{
 				SwitchState(EyeState.DEAD);

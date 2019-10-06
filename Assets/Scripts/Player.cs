@@ -82,7 +82,7 @@ public class Player : MonoBehaviour
 			{
 				if (lifes <= 1)
 				{
-					//Destroy(gameObject);
+					Destroy(gameObject);
 					Instantiate(explosion, transform.position + new Vector3(-1, -1, 0), transform.rotation);
 					audioController.PlaySingle(playerBreak, 1f);
 					lifes--;
