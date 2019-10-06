@@ -1,11 +1,11 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
 	public GameObject lifePrefab;
+	public Sprite orangeSprite;
 
 	private int wave, bosswave = 10;
 	private Vector3 spawnPos, spawnPosEye;
@@ -47,11 +47,24 @@ public class GameController : MonoBehaviour
 
 	public void FixedUpdate()
 	{
-		if (isDead || isWin) {
-			if(Input.GetButton("Fire3")) {
+		if (isDead || isWin)
+		{
+			if (Input.GetButton("Fire3"))
+			{
 				SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 			}
 		}
+		else
+		{
+			var i = 0;
+			foreach (Transform child in lifeParent.transform)
+			{
+				child.gameObject.transform.position = new Vector3(32 + (40 * i), Screen.height - 32, 0);
+				i++;
+			}
+		}
+
+
 	}
 
 	private void Restart()
@@ -67,7 +80,8 @@ public class GameController : MonoBehaviour
 
 	public void Dead()
 	{
-		if (!isWin) {
+		if (!isWin)
+		{
 			isDead = true;
 
 			gameOver.SetActive(true);
@@ -75,8 +89,10 @@ public class GameController : MonoBehaviour
 		}
 	}
 
-	public void Win() {
-		if (!isDead) {
+	public void Win()
+	{
+		if (!isDead)
+		{
 			isWin = true;
 
 			congrats.SetActive(true);
@@ -137,10 +153,16 @@ public class GameController : MonoBehaviour
 	public void SpawnPowerup(GameObject enemy, int mobwave = 1)
 	{
 		var spawnChance = Random.Range(0.0f, 0.8f - ((bosswave - mobwave) / bosswave));
-		if (spawnChance < 0.1f)
+		if (spawnChance < 0.2f)
 		{
 			var powerup = Instantiate(powerupPrefab, enemy.transform.position, enemy.transform.rotation);
-			powerup.GetComponent<Powerup>().weaponType = Random.Range(1, 2) == 1 ? WeaponType.Plasma : WeaponType.Beam;
+
+			var type = Random.Range(1, 3) == 1 ? WeaponType.Plasma : WeaponType.Beam;
+
+			if (type.Equals(WeaponType.Beam)) {
+				powerup.GetComponent<Powerup>().weaponType = WeaponType.Beam;
+				powerup.GetComponent<SpriteRenderer>().sprite = orangeSprite;
+			}
 		}
 	}
 
@@ -148,7 +170,6 @@ public class GameController : MonoBehaviour
 
 	public void RenderLife(int lifes)
 	{
-
 		foreach (Transform child in lifeParent.transform)
 		{
 			Destroy(child.gameObject);
@@ -156,7 +177,7 @@ public class GameController : MonoBehaviour
 
 		for (var i = 0; i < lifes; i++)
 		{
-			var tempLife = Instantiate(lifePrefab, new Vector3(32 + (40 * i), Screen.height - 32, 0), lifeParent.transform.rotation, lifeParent.transform);
+			Instantiate(lifePrefab, new Vector3(32 + (40 * i), Screen.height - 32, 0), lifeParent.transform.rotation, lifeParent.transform);
 		}
 
 	}

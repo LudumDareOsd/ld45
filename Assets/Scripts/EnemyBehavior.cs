@@ -55,8 +55,15 @@ public class EnemyBehavior : MonoBehaviour
 	{
 		if (collision.CompareTag("PlayerBullet"))
 		{
-			//collision.gameObject.GetComponent<Bullet>().damage
-			life -= collision.gameObject.GetComponent<Bullet>().damage;
+			var bullet = collision.gameObject.GetComponent<Bullet>();
+			if (bullet)
+			{
+				life -= bullet.damage;
+			}
+			else
+			{
+				life--;
+			}
 			if (life < 1)
 			{
 				gameController.SpawnPowerup(gameObject, wave);

@@ -12,13 +12,13 @@ public class EnemyBehaviorEye : MonoBehaviour
 	private int life = 3;
 	private float lifetime = 0.0f;
 	private float lifetime_max = 9.0f;
-	//private GameController gameController;
+	private GameController gameController;
 	private AudioController audioController;
 
 	void Start()
 	{
 		audioController = GameObject.Find("AudioController").GetComponent<AudioController>();
-		//gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
+		gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
 		rb = GetComponent<Rigidbody2D>();
 	}
 
@@ -34,9 +34,17 @@ public class EnemyBehaviorEye : MonoBehaviour
 
 	public void OnTriggerEnter2D(Collider2D collision)
 	{
-		life -= collision.gameObject.GetComponent<Bullet>().damage;
+		var bullet = collision.gameObject.GetComponent<Bullet>();
+
+		if (bullet) {
+			life -= bullet.damage;
+		} else {
+			life--;
+		}
+		
 		if (life < 1)
 		{
+			gameController.SpawnPowerup(gameObject, 3);
 			Instantiate(bloodsplosion, transform.position, transform.rotation);
 			audioController.PlaySingle(deathSound, 0.3f);
 			Destroy(gameObject);
