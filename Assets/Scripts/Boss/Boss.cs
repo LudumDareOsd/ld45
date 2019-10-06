@@ -11,7 +11,7 @@ public class Boss : MonoBehaviour
 {
 	public float dodge = 2.0f;
 	public Vector2 maneuverTime = new Vector2(2, 5);
-	public AudioClip appearSound, phase3Sound;
+	public AudioClip appearSound, phase3Sound, deathSound;
 	public Sprite angryEyes;
 
 	private Eye leftEye, rightEye, bigEye;
@@ -79,7 +79,7 @@ public class Boss : MonoBehaviour
 	public void NextPhase()
 	{
 		state = (BossState)((int)state + 1);
-		Debug.Log("BOSS IN PHASE: " + state.ToString());
+		//Debug.Log("BOSS IN PHASE: " + state.ToString());
 
 		if (state == BossState.INTRO)
 		{
@@ -102,13 +102,11 @@ public class Boss : MonoBehaviour
 
 		if (state == BossState.REVIVE)
 		{
-			StopCoroutine(Evade());
 			StartCoroutine(Regenerate());
 		}
 
 		if (state == BossState.PHASE3)
 		{
-			StartCoroutine(Evade());
 			StopCoroutine(Regenerate());
 			leftEye.SwitchState(EyeState.OPEN);
 			rightEye.SwitchState(EyeState.CLOSED);
@@ -121,6 +119,7 @@ public class Boss : MonoBehaviour
 
 		else if (state == BossState.DEAD)
 		{
+			audioController.PlaySingle(deathSound, 0.7f);
 			Destroy(gameObject);
 		}
 	}
@@ -249,16 +248,17 @@ public class Boss : MonoBehaviour
 
 	IEnumerator Regenerate()
 	{
-		targetXManeuver = 0;
-		yield return new WaitForSeconds(2);
+		StopCoroutine(Evade());
+		targetXManeuver = 0; moveSmoothing = 0.0f;
+		yield return new WaitForSeconds(6);
 		audioController.PlaySingle(phase3Sound, 0.7f);
-		yield return new WaitForSeconds(1);
 		StartCoroutine(Flash(new Color32(255, 44, 244, 255)));
-		yield return new WaitForSeconds(1);
 		leftEye.Revive();
 		rightEye.Revive();
 		bigEye.Revive();
-		yield return new WaitForSeconds(1);
+		yield return new WaitForSeconds(4);
+		StartCoroutine(Evade());
+		moveSmoothing = 1.9f;
 		NextPhase();
 	}
 

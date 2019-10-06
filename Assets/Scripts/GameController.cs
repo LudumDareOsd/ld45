@@ -6,12 +6,10 @@ public class GameController : MonoBehaviour
 {
 	public GameObject lifePrefab;
 
-	private int wave, bosswave = 1;
+	private int wave, bosswave = 5;
 	private Vector3 spawnPos, spawnPosEye;
 	private Player player;
 	private GameObject enemyPrefab, enemyEyePrefab, bossPrefab, powerupPrefab, enemiesContainer;
-	private List<GameObject> enemies = new List<GameObject>();
-
 	private GameObject lifeParent;
 
 	void Start()
@@ -68,28 +66,27 @@ public class GameController : MonoBehaviour
 				Instantiate(bossPrefab);
 			}
 
-			for (var i = 0; i < wave; i++)
+			for (var i = 0; i < (wave > bosswave ? bosswave : wave); i++)
 			{
 				var spawnPosition = new Vector3(spawnPos.x, spawnPos.y, 0.0f);
 				//var enemy = Instantiate(enemyPrefab, spawnPosition, spawnRotation);
 				var enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
 				enemy.transform.SetParent(enemiesContainer.transform);
-				enemies.Add(enemy);
 				yield return new WaitForSeconds(1);
 			}
 			yield return new WaitForSeconds(10);
-			enemies.Clear();
-			wave += (wave > bosswave) ? 0 : 1;
+			wave++;
 		}
 	}
 
-	public void SpawnPowerup(GameObject enemy)
+	public void SpawnPowerup(GameObject enemy, int wave = 1)
 	{
-		if (enemies.Count < 2)
+		//10 - 5 / 10
+		var spawnChance = Random.Range(0.0f, 1.1f - ((bosswave - wave) / bosswave));
+		if (spawnChance < 0.1f)
 		{
 			Instantiate(powerupPrefab, enemy.transform.position, enemy.transform.rotation);
 		}
-		enemies.Remove(enemy);
 	}
 
 	public int GetWave() { return wave; }

@@ -24,6 +24,7 @@ public class EnemyBehavior : MonoBehaviour
 		gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
 		hardpoint = GetComponentInChildren<HardPoint>();
 		wave = gameController.GetWave();
+		Debug.Log("Spawning enemy for wave " + wave.ToString());
 		rb = GetComponent<Rigidbody2D>();
 		shootDelay = Random.Range(0.0f, 1.0f);
 
@@ -53,13 +54,19 @@ public class EnemyBehavior : MonoBehaviour
 
 	public void OnTriggerEnter2D(Collider2D collision)
 	{
-		life--;
-		if (life < 1)
+		if (collision.CompareTag("PlayerBullet"))
 		{
-			gameController.SpawnPowerup(gameObject);
-			Instantiate(bloodsplosion, transform.position, transform.rotation);
-			audioController.PlaySingle(deathSound, 0.5f);
-			Destroy(gameObject);
+			if (life < 1)
+			{
+				gameController.SpawnPowerup(gameObject, wave);
+				Instantiate(bloodsplosion, transform.position, transform.rotation);
+				audioController.PlaySingle(deathSound, 0.5f);
+				Destroy(gameObject);
+			}
+			else
+			{
+				life--;
+			}
 		}
 	}
 
