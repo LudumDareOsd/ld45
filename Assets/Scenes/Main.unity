@@ -441,6 +441,12 @@ MonoBehaviour:
   hardPoint: {fileID: 677946439004598702, guid: 7c6892a9aa60a604089bb9e846e500e3,
     type: 3}
   bullet: {fileID: 7351115556574824194, guid: 32548de73f13ffe44816e13fd4754f1e, type: 3}
+  laserBullet: {fileID: 4335300250250027978, guid: 4af09f6e63329ce4dac1c9c854df4414,
+    type: 3}
+  laserScytheSmall: {fileID: 7484601826344277922, guid: 63702087a7f281b4a954f17a04b77b3e,
+    type: 3}
+  laserScytheLarge: {fileID: 6854928345577956380, guid: 2ad711a88f0c7ff49bd6525de0671a6c,
+    type: 3}
   explosion: {fileID: 4941903259475521590, guid: 90bf67711a1f17b49ade51311146bf57,
     type: 3}
   fireSound: {fileID: 8300000, guid: f71205b8beb9d5c4f92b83a68caf694a, type: 3}
@@ -930,6 +936,11 @@ MonoBehaviour:
   pLevel3: {fileID: 21300000, guid: a2382e8d2bd317146bb055bc83cba681, type: 3}
   pLevel4: {fileID: 21300000, guid: 730c5003beca6714f9b7718f2b0ed296, type: 3}
   pLevel5: {fileID: 21300000, guid: 6bccbe4362844b443984403631e32f18, type: 3}
+  pLevel1Orange: {fileID: 21300000, guid: 1decd9bd023828449b199efb7b5de112, type: 3}
+  pLevel2Orange: {fileID: 21300000, guid: bef4ba94a7a3b7a4fafc925a9d68ce7a, type: 3}
+  pLevel3Orange: {fileID: 21300000, guid: 6982776c7fbf3f44496ad498f42e3f47, type: 3}
+  pLevel4Orange: {fileID: 21300000, guid: 4532fa33fd417b6469e54b678992e432, type: 3}
+  pLevel5Orange: {fileID: 21300000, guid: a67a35579e349bd4db4c839550d4dda1, type: 3}
   powerlevel: {fileID: 589002410}
   shipRenderer: {fileID: 0}
 --- !u!212 &974406312
@@ -1084,7 +1095,7 @@ Transform:
   m_GameObject: {fileID: 1539968758}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 20, y: 20, z: 1}
+  m_LocalScale: {x: 10, y: 10, z: 1}
   m_Children: []
   m_Father: {fileID: 2090333771}
   m_RootOrder: 0
