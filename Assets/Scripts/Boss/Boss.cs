@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum BossState
 {
-	INITIAL, INTRO, PHASE1, PHASE2, PHASE3, DEAD
+	INITIAL, INTRO, PHASE1, PHASE2, REVIVE, PHASE3, DEAD
 }
 
 public class Boss : MonoBehaviour
@@ -60,6 +60,9 @@ public class Boss : MonoBehaviour
 			case BossState.PHASE2:
 				Phase2();
 				break;
+			case BossState.REVIVE:
+				Revive();
+				break;
 			case BossState.PHASE3:
 				Phase3();
 				break;
@@ -97,18 +100,22 @@ public class Boss : MonoBehaviour
 			bigEyeToggle = 2.5f;
 		}
 
+		if (state == BossState.REVIVE)
+		{
+			StopCoroutine(Evade());
+			StartCoroutine(Regenerate());
+		}
+
 		if (state == BossState.PHASE3)
 		{
-			leftEye.Revive();
+			StartCoroutine(Evade());
+			StopCoroutine(Regenerate());
 			leftEye.SwitchState(EyeState.OPEN);
-			rightEye.Revive();
 			rightEye.SwitchState(EyeState.CLOSED);
-			bigEye.Revive();
 			bigEye.SwitchState(EyeState.CLOSED);
 			eyeToggle = 0.0f;
 			bigEyeToggle = 2.5f;
 			moveSmoothing = 1.7f;
-			audioController.PlaySingle(phase3Sound, 0.7f);
 			eyeSprite.sprite = angryEyes;
 		}
 
@@ -140,6 +147,11 @@ public class Boss : MonoBehaviour
 			bigEye.ToggleOpen();
 			bigEyeToggle = 0.0f;
 		}
+	}
+
+	void Revive()
+	{
+
 	}
 
 	void Phase3()
@@ -196,13 +208,12 @@ public class Boss : MonoBehaviour
 					NextPhase();
 				break;
 		}
-		if (!flashing) StartCoroutine(Flash());
+		if (!flashing) StartCoroutine(Flash(new Color32(255, 166, 166, 130)));
 	}
 
-	IEnumerator Flash()
+	IEnumerator Flash(Color32 flashcolor)
 	{
 		flashing = true;
-		var flashcolor = new Color32(255,166,166,130);
 		for (var n = 0; n < 4; n++)
 		{
 			sprite.material.color = Color.white;
@@ -234,6 +245,21 @@ public class Boss : MonoBehaviour
 			targetXManeuver = 0;
 			yield return new WaitForSeconds(Random.Range(1.0f, 3.0f));
 		}
+	}
+
+	IEnumerator Regenerate()
+	{
+		targetXManeuver = 0;
+		yield return new WaitForSeconds(2);
+		audioController.PlaySingle(phase3Sound, 0.7f);
+		yield return new WaitForSeconds(1);
+		StartCoroutine(Flash(new Color32(255, 44, 244, 255)));
+		yield return new WaitForSeconds(1);
+		leftEye.Revive();
+		rightEye.Revive();
+		bigEye.Revive();
+		yield return new WaitForSeconds(1);
+		NextPhase();
 	}
 
 }

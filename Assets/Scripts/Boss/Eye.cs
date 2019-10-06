@@ -79,18 +79,18 @@ public class Eye : MonoBehaviour
 		if (collision.CompareTag("PlayerBullet"))
 		{
 			health--;
-			boss.TakeDamage();
 			if (health < 1)
 			{
 				SwitchState(EyeState.DEAD);
 			}
+			boss.TakeDamage();
 		}
 	}
 
 	public void Revive()
 	{
 		health = reviveHealth;
-		SwitchState(EyeState.OPEN);
+		SwitchState(EyeState.CLOSED);
 	}
 
 	public void ToggleOpen()
