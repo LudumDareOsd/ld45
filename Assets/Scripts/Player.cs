@@ -72,8 +72,6 @@ public class Player : MonoBehaviour
 
 			PowerLevel(powerLevel, pu.weaponType);
 
-			PowerLevel(4, WeaponType.Beam);
-
 			audioController.PlaySingle(powerUpSound, 0.7f);
 		}
 		else
@@ -173,17 +171,27 @@ public class Player : MonoBehaviour
 				break;
 
 			default:
-				var rightRotation2 = new Quaternion();
-				var leftRotation2 = new Quaternion();
+				if (type.Equals(WeaponType.Plasma))
+				{
+					var rightRotation2 = new Quaternion();
+					var leftRotation2 = new Quaternion();
 
-				rightRotation2.eulerAngles = new Vector3(0, 0, 25);
-				leftRotation2.eulerAngles = new Vector3(0, 0, -25);
+					rightRotation2.eulerAngles = new Vector3(0, 0, 25);
+					leftRotation2.eulerAngles = new Vector3(0, 0, -25);
 
-				CreateHardPoint(transform.position + new Vector3(0.3f, -0.15f, 0), leftRotation2, bullet);
-				CreateHardPoint(transform.position + new Vector3(-0.3f, -0.15f, 0), rightRotation2, bullet);
-				CreateHardPoint(transform.position + new Vector3(0.3f, -0.15f, 0), transform.rotation, bullet);
-				CreateHardPoint(transform.position + new Vector3(-0.3f, -0.15f, 0), transform.rotation, bullet);
-				CreateHardPoint(transform.position + new Vector3(0, 0.15f, 0), transform.rotation, bullet);
+					CreateHardPoint(transform.position + new Vector3(0.3f, -0.15f, 0), leftRotation2, bullet);
+					CreateHardPoint(transform.position + new Vector3(-0.3f, -0.15f, 0), rightRotation2, bullet);
+					CreateHardPoint(transform.position + new Vector3(0.3f, -0.15f, 0), transform.rotation, bullet);
+					CreateHardPoint(transform.position + new Vector3(-0.3f, -0.15f, 0), transform.rotation, bullet);
+					CreateHardPoint(transform.position + new Vector3(0, 0.15f, 0), transform.rotation, bullet);
+				}
+				else
+				{
+					CreateHardPoint(transform.position + new Vector3(0, 0.7f, 0), transform.rotation, laserScytheLarge, 0.5f);
+					CreateHardPoint(transform.position + new Vector3(0.7f, -0.3f, 0), transform.rotation, laserBullet);
+					CreateHardPoint(transform.position + new Vector3(-0.7f, -0.3f, 0), transform.rotation, laserBullet);
+				}
+
 				break;
 		}
 	}
