@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class EnemyBehavior : MonoBehaviour
 {
+	public GameObject bloodsplosion;
+	public AudioClip deathSound;
+
 	private LTBezierPath[] enemyPaths;
 	private Rigidbody2D rb;
 	private int life = 3;
@@ -12,10 +15,12 @@ public class EnemyBehavior : MonoBehaviour
 	private float shootDelay = 1.0f;
 	private int wave;
 	private GameController gameController;
+	private AudioController audioController;
 	private HardPoint hardpoint;
 
 	void Start()
 	{
+		audioController = GameObject.Find("AudioController").GetComponent<AudioController>();
 		gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
 		hardpoint = GetComponentInChildren<HardPoint>();
 		wave = gameController.GetWave();
@@ -52,6 +57,8 @@ public class EnemyBehavior : MonoBehaviour
 		if (life < 1)
 		{
 			gameController.SpawnPowerup(gameObject);
+			Instantiate(bloodsplosion, transform.position, transform.rotation);
+			audioController.PlaySingle(deathSound, 0.5f);
 			Destroy(gameObject);
 		}
 	}
