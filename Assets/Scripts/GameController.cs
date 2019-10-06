@@ -7,7 +7,7 @@ public class GameController : MonoBehaviour
 {
 	public GameObject lifePrefab;
 
-	private int wave, bosswave = 5;
+	private int wave, bosswave = 10;
 	private Vector3 spawnPos, spawnPosEye;
 	private GameObject enemyPrefab, enemyEyePrefab, bossPrefab, powerupPrefab, enemiesContainer;
 	private GameObject lifeParent;
