@@ -24,10 +24,11 @@ public class EnemyBehavior : MonoBehaviour
 		gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
 		hardpoint = GetComponentInChildren<HardPoint>();
 		wave = gameController.GetWave();
+		Debug.Log("Spawning enemy for wave " + wave.ToString());
 		rb = GetComponent<Rigidbody2D>();
 		shootDelay = Random.Range(0.0f, 1.0f);
 
-		//It goes in the order: startPoint, endControl, startControl, endPoint - 
+		//It goes in the order: startPoint, endControl, startControl, endPoint -
 		//Note: the control for the end and start are reversed! This is just a quirk of the API.
 		enemyPaths = new LTBezierPath[] {
 			new LTBezierPath(new Vector3[] {
@@ -47,19 +48,25 @@ public class EnemyBehavior : MonoBehaviour
 				Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0.0f)), Camera.main.ViewportToWorldPoint(new Vector3(1.0f, 1.1f, 0.0f))
 			})
 		};
-		
+
 		//StartCoroutine(Evade());
 	}
 
 	public void OnTriggerEnter2D(Collider2D collision)
 	{
-		life--;
-		if (life < 1)
+		if (collision.CompareTag("PlayerBullet"))
 		{
-			gameController.SpawnPowerup(gameObject);
-			Instantiate(bloodsplosion, transform.position, transform.rotation);
-			audioController.PlaySingleHigh(deathSound, 0.3f);
-			Destroy(gameObject);
+			if (life < 1)
+			{
+				gameController.SpawnPowerup(gameObject, wave);
+				Instantiate(bloodsplosion, transform.position, transform.rotation);
+				audioController.PlaySingle(deathSound, 0.3f);
+				Destroy(gameObject);
+			}
+			else
+			{
+				life--;
+			}
 		}
 	}
 
