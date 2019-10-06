@@ -10,11 +10,13 @@ public class Eye : MonoBehaviour
 	private Collider2D coll;
 	private float spreadtime = 0.0f;
 	private HardPoint hp;
+	private Boss boss;
 
 	void Start()
     {
+		boss = transform.parent.GetComponent<Boss>();
 		sprite = GetComponent<SpriteRenderer>();
-		coll = GetComponent<CircleCollider2D>();
+		coll = GetComponent<Collider2D>();
 		hp = GetComponentInChildren<HardPoint>();
 	}
 
@@ -38,11 +40,30 @@ public class Eye : MonoBehaviour
 		spreadtime += Time.deltaTime;
 	}
 
+	public void OnTriggerEnter2D(Collider2D collision)
+	{
+		Debug.Log("Took dmg1");
+
+		if (collision.CompareTag("PlayerBullet"))
+		{
+			Debug.Log("Took dmg");
+			boss.TakeDamage();
+		}
+	}
+
 	public void ToggleEye()
 	{
 		if (dead) return;
 		sprite.enabled = !sprite.enabled;
 		coll.enabled = !coll.enabled;
+		spreadtime = 0.0f;
+	}
+
+	public void ToggleTo(bool to)
+	{
+		if (dead) return;
+		sprite.enabled = !to;
+		coll.enabled = to;
 		spreadtime = 0.0f;
 	}
 

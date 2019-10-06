@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -15,12 +16,17 @@ public class Player : MonoBehaviour
 	private List<HardPoint> hardPoints = new List<HardPoint>();
 	private int powerLevel = 1;
 	private AudioController audioController;
+	private GameController gameController;
+	private int lifes = 3;
+	private bool immortal = false;
 
 	private void Start()
 	{
 		playerRenderer = GetComponentInChildren<PlayerRenderer>();
 		body = GetComponent<Rigidbody2D>();
 		audioController = GameObject.Find("AudioController").GetComponent<AudioController>();
+		gameController = GameObject.Find("GameController").GetComponent<GameController>();
+
 		PowerLevel(powerLevel);
 	}
 
@@ -48,17 +54,24 @@ public class Player : MonoBehaviour
 		}
 		else
 		{
-			Destroy(gameObject);
+			if (!immortal)
+			{
+				StartCoroutine(Flash());
+				lifes--;
+				gameController.RenderLife(lifes);
+			}
 		}
 	}
 
-	private void PowerLevel(int level) {
+	private void PowerLevel(int level)
+	{
 		CleanHardpoints();
 		playerRenderer.PowerLevel(powerLevel);
 
 		hardPoints = new List<HardPoint>();
 
-		switch (level) {
+		switch (level)
+		{
 			case 1:
 				CreateHardPoint(transform.position + new Vector3(0, 0.15f, 0), transform.rotation);
 				break;
@@ -83,8 +96,8 @@ public class Player : MonoBehaviour
 
 				CreateHardPoint(transform.position + new Vector3(0.3f, -0.15f, 0), leftRotation);
 				CreateHardPoint(transform.position + new Vector3(-0.3f, -0.15f, 0), rightRotation);
-				CreateHardPoint(transform.position + new Vector3(0.09f,  0.15f, 0), transform.rotation);
-				CreateHardPoint(transform.position + new Vector3(-0.09f,  0.15f, 0), transform.rotation);
+				CreateHardPoint(transform.position + new Vector3(0.09f, 0.15f, 0), transform.rotation);
+				CreateHardPoint(transform.position + new Vector3(-0.09f, 0.15f, 0), transform.rotation);
 				break;
 
 			default:
@@ -103,7 +116,8 @@ public class Player : MonoBehaviour
 		}
 	}
 
-	private void CreateHardPoint(Vector3 position, Quaternion rotation) {
+	private void CreateHardPoint(Vector3 position, Quaternion rotation)
+	{
 		var hp = Instantiate(hardPoint, position, rotation, transform);
 		var hpScript = hp.GetComponent<HardPoint>();
 		hpScript.bullet = bullet;
@@ -114,10 +128,27 @@ public class Player : MonoBehaviour
 		hardPoints.Add(hpScript);
 	}
 
-	private void CleanHardpoints() {
-		foreach (var hardPoint in hardPoints) {
+	private void CleanHardpoints()
+	{
+		foreach (var hardPoint in hardPoints)
+		{
 			Destroy(hardPoint.gameObject);
 		}
+	}
+
+	private IEnumerator Flash()
+	{
+		immortal = true;
+		var flashcolor = new Color32(200, 200, 200, 130);
+		for (var n = 0; n < 6; n++)
+		{
+			playerRenderer.shipRenderer.material.color = Color.white;
+			yield return new WaitForSeconds(.2f);
+			playerRenderer.shipRenderer.material.color = flashcolor;
+			yield return new WaitForSeconds(.2f);
+		}
+		playerRenderer.shipRenderer.material.color = Color.white;
+		immortal = false;
 	}
 
 	private void Turn(float turn)
