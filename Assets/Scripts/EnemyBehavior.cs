@@ -28,7 +28,7 @@ public class EnemyBehavior : MonoBehaviour
 		rb = GetComponent<Rigidbody2D>();
 		shootDelay = Random.Range(0.0f, 1.0f);
 
-		//It goes in the order: startPoint, endControl, startControl, endPoint - 
+		//It goes in the order: startPoint, endControl, startControl, endPoint -
 		//Note: the control for the end and start are reversed! This is just a quirk of the API.
 		enemyPaths = new LTBezierPath[] {
 			new LTBezierPath(new Vector3[] {
@@ -48,7 +48,7 @@ public class EnemyBehavior : MonoBehaviour
 				Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0.0f)), Camera.main.ViewportToWorldPoint(new Vector3(1.0f, 1.1f, 0.0f))
 			})
 		};
-		
+
 		//StartCoroutine(Evade());
 	}
 
@@ -60,7 +60,7 @@ public class EnemyBehavior : MonoBehaviour
 			{
 				gameController.SpawnPowerup(gameObject, wave);
 				Instantiate(bloodsplosion, transform.position, transform.rotation);
-				audioController.PlaySingle(deathSound, 0.5f);
+				audioController.PlaySingle(deathSound, 0.3f);
 				Destroy(gameObject);
 			}
 			else
