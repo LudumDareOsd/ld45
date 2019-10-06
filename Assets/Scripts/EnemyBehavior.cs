@@ -58,7 +58,7 @@ public class EnemyBehavior : MonoBehaviour
 		{
 			gameController.SpawnPowerup(gameObject);
 			Instantiate(bloodsplosion, transform.position, transform.rotation);
-			audioController.PlaySingle(deathSound, 0.5f);
+			audioController.PlaySingleHigh(deathSound, 0.3f);
 			Destroy(gameObject);
 		}
 	}

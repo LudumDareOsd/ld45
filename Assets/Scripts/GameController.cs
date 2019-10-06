@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -8,32 +9,53 @@ public class GameController : MonoBehaviour
 
 	private int wave, bosswave = 1;
 	private Vector3 spawnPos, spawnPosEye;
-	private Player player;
 	private GameObject enemyPrefab, enemyEyePrefab, bossPrefab, powerupPrefab, enemiesContainer;
 	private List<GameObject> enemies = new List<GameObject>();
 
 	private GameObject lifeParent;
+	private bool intro = true;
+	private bool isDead = false;
+	private GameObject title;
+	private GameObject gameOver;
+	private GameObject pressStart;
+	private GameObject congrats;
 
-	void Start()
+	private void Start()
 	{
 		powerupPrefab = (GameObject)Resources.Load("Prefabs/Powerup", typeof(GameObject));
 		enemyPrefab = (GameObject)Resources.Load("Prefabs/Enemy", typeof(GameObject));
 		enemyEyePrefab = (GameObject)Resources.Load("Prefabs/EnemyEye", typeof(GameObject));
 		bossPrefab = (GameObject)Resources.Load("Prefabs/Boss", typeof(GameObject));
 		enemiesContainer = GameObject.FindWithTag("Enemies");
-		player = GameObject.FindWithTag("Player").GetComponent<Player>();
 		spawnPos = Camera.main.ViewportToWorldPoint(new Vector3(-1.0f, 1.1f, 0.0f));
 		spawnPosEye = Camera.main.ViewportToWorldPoint(new Vector3(1.0f, 1.1f, 0.0f));
-		StartCoroutine(SpawnWaves());
-		StartCoroutine(SpawnEyes());
+		title = GameObject.Find("Title");
+		gameOver = GameObject.Find("GameOver");
+		pressStart = GameObject.Find("PressStart");
+		congrats = GameObject.Find("Congrats");
+
+		gameOver.SetActive(false);
+		pressStart.SetActive(false);
+		congrats.SetActive(false);
+
+
+		StartCoroutine(IntroSequence());
+
 		Restart();
 
 		lifeParent = GameObject.Find("Lifes");
-
-		RenderLife(3);
 	}
 
-	void Restart()
+	public void FixedUpdate()
+	{
+		if (isDead) {
+			if(Input.GetButton("Fire3")) {
+				SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+			}
+		}
+	}
+
+	private void Restart()
 	{
 		// TODO: Code to reset player restart map etc
 		wave = 1;
@@ -45,7 +67,34 @@ public class GameController : MonoBehaviour
 		Restart();
 	}
 
-	IEnumerator SpawnEyes()
+	public bool IsIntro()
+	{
+		return intro;
+	}
+
+	public void Dead()
+	{
+		isDead = true;
+
+		gameOver.SetActive(true);
+		pressStart.SetActive(true);
+	}
+
+	private IEnumerator IntroSequence()
+	{
+		intro = true;
+		var po = Instantiate(powerupPrefab, new Vector3(0, 15, 0), new Quaternion());
+		po.GetComponent<Rigidbody2D>().gravityScale = 0.1f;
+
+		yield return new WaitForSeconds(8);
+		StartCoroutine(SpawnWaves());
+		StartCoroutine(SpawnEyes());
+		RenderLife(3);
+		intro = false;
+		title.SetActive(false);
+	}
+
+	private IEnumerator SpawnEyes()
 	{
 		yield return new WaitForSeconds(8);
 		while (true)
@@ -57,7 +106,7 @@ public class GameController : MonoBehaviour
 		}
 	}
 
-	IEnumerator SpawnWaves()
+	private IEnumerator SpawnWaves()
 	{
 		yield return new WaitForSeconds(4);
 		while (true)
@@ -95,14 +144,16 @@ public class GameController : MonoBehaviour
 
 	public int GetWave() { return wave; }
 
-	public void RenderLife(int lifes) {
+	public void RenderLife(int lifes)
+	{
 
 		foreach (Transform child in lifeParent.transform)
 		{
 			Destroy(child.gameObject);
 		}
 
-		for (var i = 0; i < lifes; i++) {
+		for (var i = 0; i < lifes; i++)
+		{
 			var tempLife = Instantiate(lifePrefab, new Vector3(32 + (40 * i), Screen.height - 32, 0), lifeParent.transform.rotation, lifeParent.transform);
 		}
 

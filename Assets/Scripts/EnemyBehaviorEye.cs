@@ -40,7 +40,7 @@ public class EnemyBehaviorEye : MonoBehaviour
 		if (life < 1)
 		{
 			Instantiate(bloodsplosion, transform.position, transform.rotation);
-			audioController.PlaySingle(deathSound, 0.5f);
+			audioController.PlaySingle(deathSound, 0.3f);
 			gameController.SpawnPowerup(gameObject);
 			Destroy(gameObject);
 		}

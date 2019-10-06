@@ -17,7 +17,7 @@ public class Player : MonoBehaviour
 	private float maxMovespeed = 4f;
 	private Rigidbody2D body;
 	private List<HardPoint> hardPoints = new List<HardPoint>();
-	private int powerLevel = 1;
+	private int powerLevel = 0;
 	private AudioController audioController;
 	private GameController gameController;
 	private int lifes = 3;
@@ -33,18 +33,25 @@ public class Player : MonoBehaviour
 		PowerLevel(powerLevel);
 	}
 
-	private void Update()
+	private void FixedUpdate()
 	{
-		Turn(Input.GetAxis("Horizontal"));
-		Accelerate(Input.GetAxis("Vertical"));
-
-		if (Input.GetButton("Fire1"))
+		if (!gameController.IsIntro())
 		{
-			foreach (var hardPoint in hardPoints)
+			Turn(Input.GetAxis("Horizontal"));
+			Accelerate(Input.GetAxis("Vertical"));
+
+			if (Input.GetButton("Fire1"))
 			{
-				hardPoint.Fire();
+				foreach (var hardPoint in hardPoints)
+				{
+					hardPoint.Fire();
+				}
 			}
 		}
+		else {
+			body.velocity = new Vector3(0, 1f, 0);
+		}
+		
 	}
 
 	public void OnTriggerEnter2D(Collider2D collision)
@@ -67,6 +74,7 @@ public class Player : MonoBehaviour
 					audioController.PlaySingle(playerBreak, 1f);
 					lifes--;
 					gameController.RenderLife(lifes);
+					gameController.Dead();
 				}
 				else
 				{
@@ -89,6 +97,9 @@ public class Player : MonoBehaviour
 
 		switch (level)
 		{
+			case 0:
+				break;
+
 			case 1:
 				CreateHardPoint(transform.position + new Vector3(0, 0.15f, 0), transform.rotation);
 				break;

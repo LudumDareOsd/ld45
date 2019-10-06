@@ -60,6 +60,10 @@ public class PlayerRenderer : MonoBehaviour
 	{
 		switch (level)
 		{
+			case 0:
+				powerRenderer.sprite = null;
+				break;
+
 			case 1:
 				powerRenderer.sprite = pLevel1;
 				break;
