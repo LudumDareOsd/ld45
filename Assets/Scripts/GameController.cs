@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour
 	public GameObject lifePrefab;
 
 	private int wave, bosswave = 10;
+	private float powerupChance = 0.1f;
 	private Vector3 spawnPos, spawnPosEye;
 	private GameObject enemyPrefab, enemyEyePrefab, bossPrefab, powerupPrefab, enemiesContainer;
 	private GameObject lifeParent;
@@ -137,10 +138,15 @@ public class GameController : MonoBehaviour
 	public void SpawnPowerup(GameObject enemy, int mobwave = 1)
 	{
 		var spawnChance = Random.Range(0.0f, 0.8f - ((bosswave - mobwave) / bosswave));
-		if (spawnChance < 0.1f)
+		if (spawnChance < powerupChance)
 		{
 			var powerup = Instantiate(powerupPrefab, enemy.transform.position, enemy.transform.rotation);
 			powerup.GetComponent<Powerup>().weaponType = Random.Range(1, 2) == 1 ? WeaponType.Plasma : WeaponType.Beam;
+			powerupChance = 0.1f;
+		}
+		else
+		{
+			powerupChance += 0.1f;
 		}
 	}
 
