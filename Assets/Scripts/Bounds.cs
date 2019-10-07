@@ -12,7 +12,7 @@ public class Bounds : MonoBehaviour
 
 		var viewpos = transform.position;
 		viewpos.x = Mathf.Clamp(viewpos.x, (screenBounds.x * -1 + 1), screenBounds.x - 1);
-		viewpos.y = Mathf.Clamp(viewpos.y, (screenBounds.y * -1 + 1), screenBounds.y - 1);
+		viewpos.y = Mathf.Clamp(viewpos.y, (screenBounds.y * -1 + 1.5f), screenBounds.y - 1);
 
 		transform.position = viewpos;
 

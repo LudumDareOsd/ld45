@@ -1,11 +1,11 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
 	public GameObject lifePrefab;
+	public Sprite orangeSprite;
 
 	private int wave, bosswave = 10;
 	private float powerupChance = 0.1f;
@@ -48,16 +48,28 @@ public class GameController : MonoBehaviour
 
 	public void FixedUpdate()
 	{
-		if (isDead || isWin) {
-			if(Input.GetButton("Fire3")) {
+		if (isDead || isWin)
+		{
+			if (Input.GetButton("Fire3"))
+			{
 				SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 			}
 		}
+		else
+		{
+			var i = 0;
+			foreach (Transform child in lifeParent.transform)
+			{
+				child.gameObject.transform.position = new Vector3(32 + (40 * i), Screen.height - 32, 0);
+				i++;
+			}
+		}
+
+
 	}
 
 	private void Restart()
 	{
-		// TODO: Code to reset player restart map etc
 		wave = 1;
 	}
 
@@ -68,7 +80,8 @@ public class GameController : MonoBehaviour
 
 	public void Dead()
 	{
-		if (!isWin) {
+		if (!isWin)
+		{
 			isDead = true;
 
 			gameOver.SetActive(true);
@@ -76,8 +89,10 @@ public class GameController : MonoBehaviour
 		}
 	}
 
-	public void Win() {
-		if (!isDead) {
+	public void Win()
+	{
+		if (!isDead)
+		{
 			isWin = true;
 
 			congrats.SetActive(true);
@@ -116,7 +131,6 @@ public class GameController : MonoBehaviour
 		yield return new WaitForSeconds(4);
 		while (true)
 		{
-			//Debug.Log("Spawning wave " + wave.ToString());
 			if (wave == bosswave)
 			{
 				Instantiate(bossPrefab);
@@ -125,7 +139,6 @@ public class GameController : MonoBehaviour
 			for (var i = 0; i < GetWave(); i++)
 			{
 				var spawnPosition = new Vector3(spawnPos.x, spawnPos.y, 0.0f);
-				//var enemy = Instantiate(enemyPrefab, spawnPosition, spawnRotation);
 				var enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
 				enemy.transform.SetParent(enemiesContainer.transform);
 				yield return new WaitForSeconds(1);
@@ -137,16 +150,24 @@ public class GameController : MonoBehaviour
 
 	public void SpawnPowerup(GameObject enemy, int mobwave = 1)
 	{
-		var spawnChance = Random.Range(0.0f, 0.8f - ((bosswave - mobwave) / bosswave));
+		var spawnChance = Random.Range(0.0f, 0.2f + ((float)GetWave() / (float)bosswave));
+		//Debug.Log(spawnChance + " " + powerupChance + " " + (0.2f + ((float)GetWave() / (float)bosswave)));
 		if (spawnChance < powerupChance)
 		{
 			var powerup = Instantiate(powerupPrefab, enemy.transform.position, enemy.transform.rotation);
+			var type = Random.Range(1, 3) == 1 ? WeaponType.Plasma : WeaponType.Beam;
 			powerup.GetComponent<Powerup>().weaponType = Random.Range(1, 2) == 1 ? WeaponType.Plasma : WeaponType.Beam;
 			powerupChance = 0.1f;
+
+			if (type.Equals(WeaponType.Beam))
+			{
+				powerup.GetComponent<Powerup>().weaponType = WeaponType.Beam;
+				powerup.GetComponent<SpriteRenderer>().sprite = orangeSprite;
+			}
 		}
 		else
 		{
-			powerupChance += 0.1f;
+			powerupChance += 0.1f - (0.05f * ((float)GetWave() / (float)bosswave));
 		}
 	}
 
@@ -154,7 +175,6 @@ public class GameController : MonoBehaviour
 
 	public void RenderLife(int lifes)
 	{
-
 		foreach (Transform child in lifeParent.transform)
 		{
 			Destroy(child.gameObject);
@@ -162,7 +182,7 @@ public class GameController : MonoBehaviour
 
 		for (var i = 0; i < lifes; i++)
 		{
-			var tempLife = Instantiate(lifePrefab, new Vector3(32 + (40 * i), Screen.height - 32, 0), lifeParent.transform.rotation, lifeParent.transform);
+			Instantiate(lifePrefab, new Vector3(32 + (40 * i), Screen.height - 32, 0), lifeParent.transform.rotation, lifeParent.transform);
 		}
 
 	}

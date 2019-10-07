@@ -48,7 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: d7a6388c22b9f9f4d9d55fca5c4356b1, type: 3}
   velocity: 15
-  damage: 3
+  damage: 4
 --- !u!212 &7214192464000435540
 SpriteRenderer:
   m_ObjectHideFlags: 0

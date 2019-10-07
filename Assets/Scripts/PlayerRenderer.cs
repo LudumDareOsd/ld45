@@ -85,7 +85,7 @@ public class PlayerRenderer : MonoBehaviour
 				case 4:
 					powerRenderer.sprite = pLevel4;
 					break;
-				case 5:
+				default:
 					powerRenderer.sprite = pLevel5;
 					break;
 			}
@@ -109,7 +109,7 @@ public class PlayerRenderer : MonoBehaviour
 				case 4:
 					powerRenderer.sprite = pLevel4Orange;
 					break;
-				case 5:
+				default:
 					powerRenderer.sprite = pLevel5Orange;
 					break;
 			}

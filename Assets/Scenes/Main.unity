@@ -1823,6 +1823,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lifePrefab: {fileID: 3455488428328159309, guid: 9f7e831c2d41d084e88d901c7310ecc7,
     type: 3}
+  orangeSprite: {fileID: 21300000, guid: a67a35579e349bd4db4c839550d4dda1, type: 3}
 --- !u!4 &1936891376
 Transform:
   m_ObjectHideFlags: 0
